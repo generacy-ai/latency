@@ -10,34 +10,34 @@
 
 ## Phase 1: Package Setup
 
-- [ ] T001 Create `packages/claude-code-interface/` directory structure with `package.json`, `tsconfig.json`, and `src/index.ts`
-- [ ] T002 [P] Create `packages/latency-plugin-claude-code/` directory structure with `package.json`, `tsconfig.json`, and `src/index.ts`
+- [X] T001 Create `packages/claude-code-interface/` directory structure with `package.json`, `tsconfig.json`, and `src/index.ts`
+- [X] T002 [P] Create `packages/latency-plugin-claude-code/` directory structure with `package.json`, `tsconfig.json`, and `src/index.ts`
 
 ## Phase 2: Interface Package — Types & Guards
 
-- [ ] T003 [US1] Implement `packages/claude-code-interface/src/types.ts` — define `ClaudeCodeResult`, `ClaudeCodeToolCall`, `ClaudeCodeCapabilities`, and `ClaudeCodeConfig` interfaces
-- [ ] T004 [P] [US1] Implement `packages/claude-code-interface/src/error-codes.ts` — define `ClaudeCodeErrorCode` enum (`CLI_NOT_FOUND`, `AUTH_FAILURE`, `RATE_LIMITED`, `PARSE_ERROR`)
-- [ ] T005 [US1] Implement `packages/claude-code-interface/src/type-guards.ts` — `isClaudeCodeResult` type guard function
-- [ ] T006 Update `packages/claude-code-interface/src/index.ts` — re-export all types, enums, and type guards
-- [ ] T007 [US1] Write `packages/claude-code-interface/__tests__/type-guards.test.ts` — tests for `isClaudeCodeResult` with valid, invalid, and edge-case inputs
+- [X] T003 [US1] Implement `packages/claude-code-interface/src/types.ts` — define `ClaudeCodeResult`, `ClaudeCodeToolCall`, `ClaudeCodeCapabilities`, and `ClaudeCodeConfig` interfaces
+- [X] T004 [P] [US1] Implement `packages/claude-code-interface/src/error-codes.ts` — define `ClaudeCodeErrorCode` enum (`CLI_NOT_FOUND`, `AUTH_FAILURE`, `RATE_LIMITED`, `PARSE_ERROR`)
+- [X] T005 [US1] Implement `packages/claude-code-interface/src/type-guards.ts` — `isClaudeCodeResult` type guard function
+- [X] T006 Update `packages/claude-code-interface/src/index.ts` — re-export all types, enums, and type guards
+- [X] T007 [US1] Write `packages/claude-code-interface/__tests__/type-guards.test.ts` — tests for `isClaudeCodeResult` with valid, invalid, and edge-case inputs
 
 ## Phase 3: Plugin Package — Core Implementation
 
-- [ ] T008 [US1] Implement `packages/latency-plugin-claude-code/src/cli-args.ts` — `buildArgs` function mapping `ClaudeCodeConfig` + `InternalInvokeOptions` to CLI flags (`--output-format json`, `--model`, `--max-turns`, `--append-system-prompt`, `--allowedTools`, `--session-id`, `--continue`, `--resume`)
-- [ ] T009 [US1] Implement `packages/latency-plugin-claude-code/src/result-parser.ts` — `parseResult` function mapping CLI JSON output to `ClaudeCodeResult` (field renaming, tool call extraction, modified file extraction) and `parseStreamEvent` for stream-json events to `StreamChunk`
-- [ ] T010 [US1] Implement `packages/latency-plugin-claude-code/src/claude-code-plugin.ts` — `ClaudeCodePlugin` class extending `AbstractDevAgentPlugin` with `doInvoke` (batch via execa + `--output-format json`), `doInvokeStream` (streaming via execa + `--output-format stream-json`), `doGetCapabilities` (via `claude --version`), and error mapping to `FacetError` with `ClaudeCodeErrorCode`
-- [ ] T011 Update `packages/latency-plugin-claude-code/src/index.ts` — re-export `ClaudeCodePlugin`, and re-export all types from `@generacy-ai/claude-code-interface`
+- [X] T008 [US1] Implement `packages/latency-plugin-claude-code/src/cli-args.ts` — `buildArgs` function mapping `ClaudeCodeConfig` + `InternalInvokeOptions` to CLI flags (`--output-format json`, `--model`, `--max-turns`, `--append-system-prompt`, `--allowedTools`, `--session-id`, `--continue`, `--resume`)
+- [X] T009 [US1] Implement `packages/latency-plugin-claude-code/src/result-parser.ts` — `parseResult` function mapping CLI JSON output to `ClaudeCodeResult` (field renaming, tool call extraction, modified file extraction) and `parseStreamEvent` for stream-json events to `StreamChunk`
+- [X] T010 [US1] Implement `packages/latency-plugin-claude-code/src/claude-code-plugin.ts` — `ClaudeCodePlugin` class extending `AbstractDevAgentPlugin` with `doInvoke` (batch via execa + `--output-format json`), `doInvokeStream` (streaming via execa + `--output-format stream-json`), `doGetCapabilities` (via `claude --version`), and error mapping to `FacetError` with `ClaudeCodeErrorCode`
+- [X] T011 Update `packages/latency-plugin-claude-code/src/index.ts` — re-export `ClaudeCodePlugin`, and re-export all types from `@generacy-ai/claude-code-interface`
 
 ## Phase 4: Plugin Package — Tests
 
-- [ ] T012 [US1] Write `packages/latency-plugin-claude-code/__tests__/cli-args.test.ts` — unit tests for `buildArgs` covering each config/option flag combination
-- [ ] T013 [P] [US1] Write `packages/latency-plugin-claude-code/__tests__/result-parser.test.ts` — unit tests for `parseResult` (success/error JSON, malformed JSON) and `parseStreamEvent` (assistant, result, system events)
-- [ ] T014 [US1] Write `packages/latency-plugin-claude-code/__tests__/claude-code-plugin.test.ts` — integration tests with mocked execa: `doInvoke` success/error paths, `doInvokeStream` yielding `StreamChunk`s, `doGetCapabilities`, cancellation via signal, each `ClaudeCodeErrorCode` error path
+- [X] T012 [US1] Write `packages/latency-plugin-claude-code/__tests__/cli-args.test.ts` — unit tests for `buildArgs` covering each config/option flag combination
+- [X] T013 [P] [US1] Write `packages/latency-plugin-claude-code/__tests__/result-parser.test.ts` — unit tests for `parseResult` (success/error JSON, malformed JSON) and `parseStreamEvent` (assistant, result, system events)
+- [X] T014 [US1] Write `packages/latency-plugin-claude-code/__tests__/claude-code-plugin.test.ts` — integration tests with mocked execa: `doInvoke` success/error paths, `doInvokeStream` yielding `StreamChunk`s, `doGetCapabilities`, cancellation via signal, each `ClaudeCodeErrorCode` error path
 
 ## Phase 5: Build & Integration Verification
 
-- [ ] T015 Run `pnpm install` from workspace root to link new packages, then `pnpm build` to verify both packages compile without errors
-- [ ] T016 [P] Run `pnpm test` in both new packages to verify all tests pass
+- [X] T015 Run `pnpm install` from workspace root to link new packages, then `pnpm build` to verify both packages compile without errors
+- [X] T016 [P] Run `pnpm test` in both new packages to verify all tests pass
 
 ## Dependencies & Execution Order
 
