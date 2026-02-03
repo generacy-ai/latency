@@ -1,0 +1,188 @@
+# Feature Specification: Define composition primitives
+
+**Branch**: `004-define-composition-primitives` | **Date**: 2026-02-03 | **Status**: Draft
+
+## Summary
+
+## Parent Epic
+Part of #1 (Phase 1 - Repository & Package Setup)
+
+## Description
+
+Create the composition system that allows plugins to declare what facets they provide and require. This is the foundation for two-way uncoupling.
+
+## Tasks
+
+- [ ] Create `src/composition/manifest.ts` - PluginManifest types
+- [ ] Create `src/composition/context.ts` - PluginContext interface
+- [ ] Create `src/composition/facet.ts` - FacetDeclaration/Requirement types
+- [ ] Create `src/composition/index.ts` - re-exports
+
+## Core Types
+
+```typescript
+// src/composition/manifest.ts
+
+/**
+ * Declares a plugin's capabilities and dependencies.
+ * This is the contract between a plugin and the runtime.
+ */
+export interface PluginManifest {
+  /** Unique plugin identifier (e.g., "agency-plugin-git") */
+  id: string;
+  
+  /** Semantic version */
+  version: string;
+  
+  /** Human-readable name */
+  name: string;
+  
+  /** Plugin description */
+  description?: string;
+  
+  /** What this plugin provides (facets it implements) */
+  provides: FacetProvider[];
+  
+  /** What this plugin requires (must be available) */
+  requires: FacetRequirement[];
+  
+  /** What this plugin can optionally use */
+  uses?: FacetRequirement[];
+}
+
+export interface FacetProvider {
+  /** The facet interface being provided (e.g., "IssueTracker") */
+  facet: string;
+  
+  /** Optional qualifier (e.g., "github", "jira") */
+  qualifier?: string;
+  
+  /** Optional priority for resolution (higher = preferred) */
+  priority?: number;
+}
+
+export interface FacetRequirement {
+  /** The facet interface being required */
+  facet: string;
+  
+  /** Optional specific qualifier, or undefined for "any" */
+  qualifier?: string;
+  
+  /** If true, plugin works without this facet */
+  optional?: boolean;
+}
+```
+
+```typescript
+// src/composition/context.ts
+
+/**
+ * Runtime context provided to plugins.
+ * Plugins use this to request facets and register providers.
+ */
+export interface PluginContext {
+  /** Get the plugin's manifest */
+  readonly manifest: PluginManifest;
+  
+  /**
+   * Request a facet implementation.
+   * Throws if required facet is not available.
+   */
+  require<T>(facet: string, qualifier?: string): T;
+  
+  /**
+   * Request an optional facet implementation.
+   * Returns undefined if not available.
+   */
+  optional<T>(facet: string, qualifier?: string): T | undefined;
+  
+  /**
+   * Register a facet provider.
+   * Called during plugin initialization.
+   */
+  provide<T>(facet: string, implementation: T, qualifier?: string): void;
+  
+  /**
+   * Request a decision from a human.
+   * Routed to whatever DecisionHandler is available.
+   */
+  requestDecision(request: DecisionRequest): Promise<DecisionResult>;
+  
+  /** Logger scoped to this plugin */
+  readonly logger: Logger;
+  
+  /** State store scoped to this plugin */
+  readonly state: StateStore;
+}
+```
+
+## File Structure
+
+```
+packages/latency/src/
+├── composition/
+│   ├── manifest.ts           # PluginManifest, FacetProvider, FacetRequirement
+│   ├── context.ts            # PluginContext interface
+│   ├── facet.ts              # Additional facet-related types
+│   └── index.ts              # Re-exports
+├── facets/
+│   └── ...
+└── index.ts
+```
+
+## Acceptance Criteria
+
+- [ ] Plugins can declare what they provide in manifest
+- [ ] Plugins can declare what they require in manifest
+- [ ] Facet requirements can be specific (qualifier) or generic (any provider)
+- [ ] Optional dependencies are supported via `uses` array
+- [ ] PluginContext interface defines runtime facet access
+- [ ] All types have comprehensive JSDoc documentation
+
+## Design Principles
+
+1. **Declarative** - Manifests describe, don't execute
+2. **Symmetric** - Same pattern for provides/requires
+3. **Qualified** - Facets can have qualifiers for specific implementations
+4. **Optional-friendly** - Clear distinction between required and optional
+
+## References
+
+- [latency-integration-plan.md - Issue 1.3](/workspaces/tetrad-development/docs/latency-integration-plan.md)
+- [latency-architecture.md - Composition Primitives](/workspaces/tetrad-development/docs/latency-architecture.md)
+
+## User Stories
+
+### US1: [Primary User Story]
+
+**As a** [user type],
+**I want** [capability],
+**So that** [benefit].
+
+**Acceptance Criteria**:
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]
+
+## Functional Requirements
+
+| ID | Requirement | Priority | Notes |
+|----|-------------|----------|-------|
+| FR-001 | [Description] | P1 | |
+
+## Success Criteria
+
+| ID | Metric | Target | Measurement |
+|----|--------|--------|-------------|
+| SC-001 | [Metric] | [Target] | [How to measure] |
+
+## Assumptions
+
+- [Assumption 1]
+
+## Out of Scope
+
+- [Exclusion 1]
+
+---
+
+*Generated by speckit*
