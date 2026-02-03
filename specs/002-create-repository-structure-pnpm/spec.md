@@ -4,12 +4,14 @@
 
 ## Summary
 
+Initialize the Latency monorepo with pnpm workspace, matching existing tetrad project configurations for consistency. This is Wave 1 foundation work - infrastructure only, with no actual exports. Subsequent issues will add core facet interfaces (#3), composition primitives (#4), and runtime binding types (#5).
+
 ## Parent Epic
 Part of #1 (Phase 1 - Repository & Package Setup)
 
 ## Description
 
-Initialize the Latency monorepo with proper workspace configuration.
+Initialize the Latency monorepo with proper workspace configuration. This issue establishes the build and tooling infrastructure, proving the package mechanism works before adding actual functionality in later phases.
 
 ## Tasks
 
@@ -56,8 +58,8 @@ generacy-ai/latency/
 - [ ] `pnpm build` compiles TypeScript successfully
 - [ ] `pnpm test` runs (even if no tests yet)
 - [ ] `pnpm lint` passes
-- [ ] CI workflow runs on push/PR
-- [ ] Package exports from `@generacy-ai/latency` work
+- [ ] CI workflow runs on push/PR and validates: build, type-check, lint, format-check, test
+- [ ] Package build mechanism works (actual exports come in later issues)
 
 ## References
 
@@ -87,13 +89,36 @@ generacy-ai/latency/
 |----|--------|--------|-------------|
 | SC-001 | [Metric] | [Target] | [How to measure] |
 
+## Configuration Standards
+
+Based on clarifications:
+
+### TypeScript Configuration
+- **Match existing Generacy/Agency projects** for consistency across the tetrad ecosystem
+- This reduces integration friction when components integrate with Latency
+
+### ESLint/Prettier Standards
+- **Copy configs from existing Generacy projects** for cross-repo consistency
+- Benefits developers working across Agency/Generacy/Humancy
+
+### README Content
+- **Brief (1-2 paragraphs)** philosophy overview
+- Link to full architecture documentation (latency-architecture.md)
+
+### CI Workflow Scope
+- **Standard coverage**: Build, type-check, lint, format-check, test
+- Additional checks (security audits, dependency checks) added in later phases
+
 ## Assumptions
 
-- [Assumption 1]
+- Existing Generacy/Agency projects have established TypeScript/ESLint/Prettier configurations to copy
+- The latency-architecture.md document exists and contains the full philosophy
 
 ## Out of Scope
 
-- [Exclusion 1]
+- Actual package exports (deferred to issues #3, #4, #5)
+- Security audits and dependency checks in CI (added in later phases)
+- Comprehensive README documentation (brief overview only)
 
 ---
 

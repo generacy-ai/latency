@@ -12,7 +12,7 @@ Questions and answers to clarify the feature specification.
 - B: Use latest TypeScript best practices (ESM, strict mode, ES2022+)
 - C: Use conservative settings for maximum compatibility
 
-**Answer**: *Pending*
+**Answer**: A (Match existing projects) - Consistency across the tetrad ecosystem will reduce integration friction when components integrate with Latency.
 
 ### Q2: ESLint/Prettier Standards
 **Context**: Code style and linting rules need to be established early to ensure consistency across the monorepo.
@@ -22,7 +22,7 @@ Questions and answers to clarify the feature specification.
 - B: Create new configs based on latest best practices
 - C: Use standard presets (eslint:recommended, prettier defaults)
 
-**Answer**: *Pending*
+**Answer**: A (Copy from existing Generacy projects) - Same reasoning - cross-repo consistency benefits developers working across Agency/Generacy/Humancy.
 
 ### Q3: README Philosophy Content
 **Context**: The initial README should communicate Latency's purpose and philosophy. This sets expectations for future contributors.
@@ -32,7 +32,7 @@ Questions and answers to clarify the feature specification.
 - B: Comprehensive (explain facets, composition, rationale)
 - C: Minimal placeholder (fill in later phases)
 
-**Answer**: *Pending*
+**Answer**: A (Brief with link) - The full philosophy is already documented in latency-architecture.md. The README should give a quick intro and link there for details.
 
 ### Q4: CI Workflow Scope
 **Context**: The CI workflow scope determines what gets validated on every push/PR. Too broad slows development, too narrow misses issues.
@@ -42,7 +42,7 @@ Questions and answers to clarify the feature specification.
 - B: Build, type-check, lint, format-check, test
 - C: Full suite including security audits, dependency checks
 
-**Answer**: *Pending*
+**Answer**: B (Build, type-check, lint, format-check, test) - Standard coverage without overhead. Additional checks (security audits, dependency checks) can be added in later phases.
 
 ### Q5: Initial Package Exports
 **Context**: The acceptance criteria mention package exports should work, but the initial implementation has only index.ts. What should be exported initially?
@@ -52,5 +52,5 @@ Questions and answers to clarify the feature specification.
 - B: Basic type definitions for facets/composition (from Phase 1.2-1.4)
 - C: This issue is just infrastructure - no actual exports yet
 
-**Answer**: *Pending*
+**Answer**: C (Infrastructure only) - Per the execution plan, this issue is Wave 1 foundation. The actual exports come from subsequent issues (#3, #4, #5). This issue just needs to prove the build/export mechanism works.
 
