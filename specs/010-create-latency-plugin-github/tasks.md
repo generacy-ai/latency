@@ -10,46 +10,46 @@
 
 ## Phase 1: Interface Package Setup & Implementation
 
-- [ ] T001 Create `packages/github-issues-interface/` directory structure with `package.json`, `tsconfig.json`, `vitest.config.ts`
-- [ ] T002 [P] Implement `src/types.ts` — define `GitHubIssue extends Issue`, `GitHubIssueSpec extends IssueSpec`, `GitHubMilestone`, `GitHubProjectItem`, `GitHubReactions`
-- [ ] T003 [P] Implement `src/guards.ts` — `isGitHubIssue(issue: Issue): issue is GitHubIssue` type guard
-- [ ] T004 [P] Implement `src/helpers.ts` — `getGitHubIssueUrl`, `parseGitHubIssueRef` utilities
-- [ ] T005 Create `src/index.ts` — re-export all public API from types, guards, helpers
-- [ ] T006 [P] Write `__tests__/guards.test.ts` — test `isGitHubIssue` with GitHubIssue, plain Issue, and edge cases
-- [ ] T007 [P] Write `__tests__/helpers.test.ts` — test `parseGitHubIssueRef` valid/invalid formats, `getGitHubIssueUrl`
-- [ ] T008 Build and verify interface package compiles with zero runtime dependencies beyond `@generacy-ai/latency`
+- [X] T001 Create `packages/github-issues-interface/` directory structure with `package.json`, `tsconfig.json`, `vitest.config.ts`
+- [X] T002 [P] Implement `src/types.ts` — define `GitHubIssue extends Issue`, `GitHubIssueSpec extends IssueSpec`, `GitHubMilestone`, `GitHubProjectItem`, `GitHubReactions`
+- [X] T003 [P] Implement `src/guards.ts` — `isGitHubIssue(issue: Issue): issue is GitHubIssue` type guard
+- [X] T004 [P] Implement `src/helpers.ts` — `getGitHubIssueUrl`, `parseGitHubIssueRef` utilities
+- [X] T005 Create `src/index.ts` — re-export all public API from types, guards, helpers
+- [X] T006 [P] Write `__tests__/guards.test.ts` — test `isGitHubIssue` with GitHubIssue, plain Issue, and edge cases
+- [X] T007 [P] Write `__tests__/helpers.test.ts` — test `parseGitHubIssueRef` valid/invalid formats, `getGitHubIssueUrl`
+- [X] T008 Build and verify interface package compiles with zero runtime dependencies beyond `@generacy-ai/latency`
 
 ## Phase 2: Plugin Package Setup
 
 <!-- Phase boundary: Complete Phase 1 before starting Phase 2 -->
 
-- [ ] T009 Create `packages/latency-plugin-github-issues/` directory structure with `package.json` (including `@octokit/rest` dep), `tsconfig.json`, `vitest.config.ts`
-- [ ] T010 Install dependencies — run `pnpm install` to resolve workspace and external deps
+- [X] T009 Create `packages/latency-plugin-github-issues/` directory structure with `package.json` (including `@octokit/rest` dep), `tsconfig.json`, `vitest.config.ts`
+- [X] T010 Install dependencies — run `pnpm install` to resolve workspace and external deps
 
 ## Phase 3: Plugin Core Implementation
 
 <!-- Phase boundary: Complete Phase 2 before starting Phase 3 -->
 
-- [ ] T011 Implement `src/errors.ts` — `mapGitHubError(error: unknown): FacetError` mapping HTTP status codes (404→NOT_FOUND, 401/403→AUTH_ERROR, 429→RATE_LIMIT, 422→VALIDATION, other→UNKNOWN)
-- [ ] T012 Implement `src/client.ts` — `GitHubClient` class wrapping Octokit with methods: `getIssue`, `createIssue`, `updateIssue`, `listIssues`, `createComment`, `addLabels`; error mapping on all calls
-- [ ] T013 Implement `src/mappers.ts` — `mapToGitHubIssue`, `mapToComment`, `mapIssuesToPaginatedResult`; handle date parsing, label extraction, milestone/reaction mapping
-- [ ] T014 Implement `src/plugin.ts` — `GitHubIssuesPlugin extends AbstractIssueTrackerPlugin`; implement all five abstract methods (`fetchIssue`, `doCreateIssue`, `doUpdateIssue`, `doListIssues`, `doAddComment`) plus `linkPullRequest` and `addLabels`
-- [ ] T015 Create `src/index.ts` — re-export `GitHubIssuesPlugin`, `GitHubConfig`, `GitHubClient`
+- [X] T011 Implement `src/errors.ts` — `mapGitHubError(error: unknown): FacetError` mapping HTTP status codes (404→NOT_FOUND, 401/403→AUTH_ERROR, 429→RATE_LIMIT, 422→VALIDATION, other→UNKNOWN)
+- [X] T012 Implement `src/client.ts` — `GitHubClient` class wrapping Octokit with methods: `getIssue`, `createIssue`, `updateIssue`, `listIssues`, `createComment`, `addLabels`; error mapping on all calls
+- [X] T013 Implement `src/mappers.ts` — `mapToGitHubIssue`, `mapToComment`, `mapIssuesToPaginatedResult`; handle date parsing, label extraction, milestone/reaction mapping
+- [X] T014 Implement `src/plugin.ts` — `GitHubIssuesPlugin extends AbstractIssueTrackerPlugin`; implement all five abstract methods (`fetchIssue`, `doCreateIssue`, `doUpdateIssue`, `doListIssues`, `doAddComment`) plus `linkPullRequest` and `addLabels`
+- [X] T015 Create `src/index.ts` — re-export `GitHubIssuesPlugin`, `GitHubConfig`, `GitHubClient`
 
 ## Phase 4: Plugin Tests
 
 <!-- Phase boundary: Complete Phase 3 before starting Phase 4 -->
 
-- [ ] T016 [P] Write `__tests__/errors.test.ts` — test error mapping for each HTTP status code, unknown errors, non-Octokit errors
-- [ ] T017 [P] Write `__tests__/mappers.test.ts` — test `mapToGitHubIssue` with realistic Octokit responses, optional fields, edge cases; test `mapToComment`; test `mapIssuesToPaginatedResult`
-- [ ] T018 Write `__tests__/plugin.test.ts` — integration tests with mocked Octokit; test all five abstract methods, `linkPullRequest`, `addLabels`, error propagation, ID parsing validation
+- [X] T016 [P] Write `__tests__/errors.test.ts` — test error mapping for each HTTP status code, unknown errors, non-Octokit errors
+- [X] T017 [P] Write `__tests__/mappers.test.ts` — test `mapToGitHubIssue` with realistic Octokit responses, optional fields, edge cases; test `mapToComment`; test `mapIssuesToPaginatedResult`
+- [X] T018 Write `__tests__/plugin.test.ts` — integration tests with mocked Octokit; test all five abstract methods, `linkPullRequest`, `addLabels`, error propagation, ID parsing validation
 
 ## Phase 5: Integration & Verification
 
 <!-- Phase boundary: Complete Phase 4 before starting Phase 5 -->
 
-- [ ] T019 Run full build (`pnpm build`) across both packages and fix any type errors
-- [ ] T020 Run all tests (`pnpm test`) across both packages and fix any failures
+- [X] T019 Run full build (`pnpm build`) across both packages and fix any type errors
+- [X] T020 Run all tests (`pnpm test`) across both packages and fix any failures
 
 ## Dependencies & Execution Order
 
