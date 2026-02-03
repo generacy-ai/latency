@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "name": "latency-workspace",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint"
+  }
+}

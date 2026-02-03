@@ -10,24 +10,24 @@
 
 ## Phase 1: Shared Types
 
-- [ ] T001 Create `packages/latency/src/facets/common.ts` — FacetError class, PaginatedQuery, PaginatedResult<T> types with full JSDoc
+- [X] T001 Create `packages/latency/src/facets/common.ts` — FacetError class, PaginatedQuery, PaginatedResult<T> types with full JSDoc
 
 ## Phase 2: Core Facet Interfaces
 
-- [ ] T002 [P] Create `packages/latency/src/facets/issue-tracker.ts` — IssueTracker interface with Issue, IssueSpec, IssueUpdate, IssueQuery (extends PaginatedQuery), Comment types
-- [ ] T003 [P] Create `packages/latency/src/facets/source-control.ts` — SourceControl interface with Commit, CommitSpec, Branch, DiffEntry types
-- [ ] T004 [P] Create `packages/latency/src/facets/decision.ts` — DecisionHandler interface with DecisionSpec, DecisionOption, DecisionResult, Urgency types
-- [ ] T005 [P] Create `packages/latency/src/facets/workflow.ts` — WorkflowEngine interface with WorkflowSpec, WorkflowStep, WorkflowResult, StepResult, WorkflowStatus types
-- [ ] T006 [P] Create `packages/latency/src/facets/logging.ts` — Logger interface (synchronous methods) with LogLevel type
-- [ ] T007 [P] Create `packages/latency/src/facets/state.ts` — StateStore interface with generic get<T>/set<T>, delete, has, keys methods
-- [ ] T008 [P] Create `packages/latency/src/facets/events.ts` — EventBus interface with unknown payloads, Unsubscribe type
-- [ ] T009 [P] Create `packages/latency/src/facets/secrets.ts` — SecretStore interface with string-only values, getSecret/setSecret/deleteSecret/hasSecret methods
+- [X] T002 [P] Create `packages/latency/src/facets/issue-tracker.ts` — IssueTracker interface with Issue, IssueSpec, IssueUpdate, IssueQuery (extends PaginatedQuery), Comment types
+- [X] T003 [P] Create `packages/latency/src/facets/source-control.ts` — SourceControl interface with Commit, CommitSpec, Branch, DiffEntry types
+- [X] T004 [P] Create `packages/latency/src/facets/decision.ts` — DecisionHandler interface with DecisionSpec, DecisionOption, DecisionResult, Urgency types
+- [X] T005 [P] Create `packages/latency/src/facets/workflow.ts` — WorkflowEngine interface with WorkflowSpec, WorkflowStep, WorkflowResult, StepResult, WorkflowStatus types
+- [X] T006 [P] Create `packages/latency/src/facets/logging.ts` — Logger interface (synchronous methods) with LogLevel type
+- [X] T007 [P] Create `packages/latency/src/facets/state.ts` — StateStore interface with generic get<T>/set<T>, delete, has, keys methods
+- [X] T008 [P] Create `packages/latency/src/facets/events.ts` — EventBus interface with unknown payloads, Unsubscribe type
+- [X] T009 [P] Create `packages/latency/src/facets/secrets.ts` — SecretStore interface with string-only values, getSecret/setSecret/deleteSecret/hasSecret methods
 
 ## Phase 3: Exports & Validation
 
-- [ ] T010 Create `packages/latency/src/facets/index.ts` — barrel re-export of all facet modules
-- [ ] T011 Update `packages/latency/src/index.ts` — add `export * from './facets/index.js'`
-- [ ] T012 Run `pnpm build` — verify zero compile errors and all `.d.ts` files generated
+- [X] T010 Create `packages/latency/src/facets/index.ts` — barrel re-export of all facet modules
+- [X] T011 Update `packages/latency/src/index.ts` — add `export * from './facets/index.js'`
+- [X] T012 Run `pnpm build` — verify zero compile errors and all `.d.ts` files generated
 
 ## Dependencies & Execution Order
 
