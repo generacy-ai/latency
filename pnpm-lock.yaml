@@ -20,6 +20,35 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
 
+  packages/github-issues-interface:
+    dependencies:
+      '@generacy-ai/latency':
+        specifier: workspace:*
+        version: link:../latency
+    devDependencies:
+      '@types/node':
+        specifier: ^20.14.0
+        version: 20.19.31
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.0
+        version: 3.2.4(@types/node@20.19.31)
+
+  packages/jira-interface:
+    dependencies:
+      '@generacy-ai/latency':
+        specifier: workspace:*
+        version: link:../latency
+    devDependencies:
+      '@types/node':
+        specifier: ^20.14.0
+        version: 20.19.31
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+
   packages/latency:
     devDependencies:
       '@types/node':
@@ -70,11 +99,58 @@ importers:
         specifier: ^3.0.0
         version: 3.2.4(@types/node@20.19.31)
 
+  packages/latency-plugin-github-issues:
+    dependencies:
+      '@generacy-ai/github-issues-interface':
+        specifier: workspace:*
+        version: link:../github-issues-interface
+      '@generacy-ai/latency':
+        specifier: workspace:*
+        version: link:../latency
+      '@generacy-ai/latency-plugin-issue-tracker':
+        specifier: workspace:*
+        version: link:../latency-plugin-issue-tracker
+      '@octokit/rest':
+        specifier: ^21.0.0
+        version: 21.1.1
+    devDependencies:
+      '@types/node':
+        specifier: ^20.14.0
+        version: 20.19.31
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.0
+        version: 3.2.4(@types/node@20.19.31)
+
   packages/latency-plugin-issue-tracker:
     dependencies:
       '@generacy-ai/latency':
         specifier: workspace:*
         version: link:../latency
+    devDependencies:
+      '@types/node':
+        specifier: ^20.14.0
+        version: 20.19.31
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.0
+        version: 3.2.4(@types/node@20.19.31)
+
+  packages/latency-plugin-jira:
+    dependencies:
+      '@generacy-ai/jira-interface':
+        specifier: workspace:*
+        version: link:../jira-interface
+      '@generacy-ai/latency':
+        specifier: workspace:*
+        version: link:../latency
+      '@generacy-ai/latency-plugin-issue-tracker':
+        specifier: workspace:*
+        version: link:../latency-plugin-issue-tracker
     devDependencies:
       '@types/node':
         specifier: ^20.14.0
