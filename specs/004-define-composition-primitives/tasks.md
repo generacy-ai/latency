@@ -10,23 +10,23 @@
 
 ## Phase 1: Setup
 
-- [ ] T001 Create composition directory structure at `packages/latency/src/composition/`
+- [X] T001 Create composition directory structure at `packages/latency/src/composition/`
 
 ## Phase 2: Core Type Definitions
 
-- [ ] T010 [P] Create `packages/latency/src/composition/facet.ts` — Define `FacetProvider`, `FacetRequirement`, and `FacetDeclaration` interfaces with JSDoc documentation
-- [ ] T020 [P] Create `packages/latency/src/composition/manifest.ts` — Define `PluginManifest` interface importing from `facet.ts`, with JSDoc documentation
-- [ ] T030 Create `packages/latency/src/composition/context.ts` — Define `PluginContext`, `DecisionRequest`, `DecisionResult`, `Logger`, and `StateStore` interfaces importing from `manifest.ts`, with JSDoc documentation
+- [X] T010 [P] Create `packages/latency/src/composition/facet.ts` — Define `FacetProvider`, `FacetRequirement`, and `FacetDeclaration` interfaces with JSDoc documentation
+- [X] T020 [P] Create `packages/latency/src/composition/manifest.ts` — Define `PluginManifest` interface importing from `facet.ts`, with JSDoc documentation
+- [X] T030 Create `packages/latency/src/composition/context.ts` — Define `PluginContext`, `DecisionRequest`, `DecisionResult`, `Logger`, and `StateStore` interfaces importing from `manifest.ts`, with JSDoc documentation
 
 ## Phase 3: Barrel Exports & Integration
 
-- [ ] T040 Create `packages/latency/src/composition/index.ts` — Barrel re-exports of all composition types
-- [ ] T050 Update `packages/latency/src/index.ts` — Re-export composition module for package-level imports
+- [X] T040 Create `packages/latency/src/composition/index.ts` — Barrel re-exports of all composition types
+- [X] T050 Update `packages/latency/src/index.ts` — Re-export composition module for package-level imports
 
 ## Phase 4: Validation
 
-- [ ] T060 Run `pnpm build` and `pnpm typecheck` to verify compilation succeeds
-- [ ] T070 Run `pnpm lint` and fix any linting issues
+- [X] T060 Run `pnpm build` and `pnpm typecheck` to verify compilation succeeds
+- [X] T070 Run `pnpm lint` and fix any linting issues
 
 ## Dependencies & Execution Order
 
