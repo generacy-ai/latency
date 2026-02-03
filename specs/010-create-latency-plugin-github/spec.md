@@ -201,37 +201,32 @@ packages/
 ### Interface
 - `@generacy-ai/latency` (types only)
 
-## User Stories
+## Clarification Decisions
 
-### US1: [Primary User Story]
+### GitHubIssueSpec
+Define `GitHubIssueSpec extends IssueSpec` in the interface package with GitHub-specific creation fields (milestone, project, labels). This follows the Plugin + Interface Pattern where the interface package contains extended types.
 
-**As a** [user type],
-**I want** [capability],
-**So that** [benefit].
+### Abstract Method Coverage
+All five abstract methods (`fetchIssue`, `doCreateIssue`, `doUpdateIssue`, `doListIssues`, `doAddComment`) must be fully implemented with GitHub API integration. No stubs.
 
-**Acceptance Criteria**:
-- [ ] [Criterion 1]
-- [ ] [Criterion 2]
+### linkPullRequest Implementation
+Use comment-based cross-referencing: add a comment on the issue referencing the PR. GitHub automatically renders bidirectional references.
 
-## Functional Requirements
-
-| ID | Requirement | Priority | Notes |
-|----|-------------|----------|-------|
-| FR-001 | [Description] | P1 | |
-
-## Success Criteria
-
-| ID | Metric | Target | Measurement |
-|----|--------|--------|-------------|
-| SC-001 | [Metric] | [Target] | [How to measure] |
+### Error Handling
+Map GitHub API errors to generic `FacetError` codes (`NOT_FOUND`, `AUTH_ERROR`, `RATE_LIMIT`) without GitHub-specific error classes. GitHub-specific details (e.g., rate limit headers) go in the error's `context`/`details` field.
 
 ## Assumptions
 
-- [Assumption 1]
+- GitHub REST API via `@octokit/rest` is sufficient (no GraphQL needed)
+- The abstract plugin from issue #6 is available as a dependency
+- Rate limit handling uses generic FacetError codes
 
 ## Out of Scope
 
-- [Exclusion 1]
+- GitHub GraphQL API support
+- GitHub Actions integration
+- Webhook handling
+- GitHub App authentication (PAT only)
 
 ---
 

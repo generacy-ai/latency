@@ -11,7 +11,7 @@ Questions and answers to clarify the feature specification.
 - A: Define `GitHubIssueSpec extends IssueSpec` with GitHub-specific fields (milestone, project, etc.)
 - B: Use base `IssueSpec` only — remove the `GitHubIssueSpec` import from the plugin code
 
-**Answer**: *Pending*
+**Answer**: **A** - Define `GitHubIssueSpec extends IssueSpec` with GitHub-specific fields (milestone, project, labels). This follows the Plugin + Interface Pattern where the interface package contains extended types. `GitHubIssue extends Issue` is already shown as the canonical example — `GitHubIssueSpec extends IssueSpec` follows the same pattern.
 
 ### Q2: Missing abstract method implementations
 **Context**: AbstractIssueTrackerPlugin requires five abstract methods: `fetchIssue`, `doCreateIssue`, `doUpdateIssue`, `doListIssues`, and `doAddComment`. The spec only shows `fetchIssue`. All five must be implemented for the plugin to compile.
@@ -20,7 +20,7 @@ Questions and answers to clarify the feature specification.
 - A: Implement all five methods with full Octokit API calls
 - B: Implement `fetchIssue` and `doListIssues` now; stub the rest for a later phase
 
-**Answer**: *Pending*
+**Answer**: **A** - Implement all five abstract methods with full GitHub API integration. The acceptance criteria state "All IssueTracker methods work with GitHub API." This is a complete, working implementation of the abstract plugin — stubbing methods would leave consumers with a partially functional facet.
 
 ### Q3: linkPullRequest implementation
 **Context**: GitHub's REST API doesn't have a direct 'link PR to issue' endpoint. PRs are linked by including 'Closes #N' in the PR body, or via the GraphQL API's timeline events. The spec shows `linkPullRequest` as a method but doesn't specify how it should work.
@@ -31,7 +31,7 @@ Questions and answers to clarify the feature specification.
 - C: Use GitHub GraphQL API to create a cross-reference
 - D: Remove this method — it's not feasible via the REST API
 
-**Answer**: *Pending*
+**Answer**: **A** - Add a comment on the issue referencing the PR. GitHub automatically renders cross-references when issues and PRs mention each other, creating a visible, bidirectional reference without requiring GraphQL dependencies or mutating PR bodies.
 
 ### Q4: Error handling strategy
 **Context**: The abstract plugin uses `FacetError` with error codes. GitHub API calls can fail with rate limits (403), not found (404), auth errors (401), and validation errors (422). The spec doesn't specify how these should be mapped.
@@ -40,5 +40,5 @@ Questions and answers to clarify the feature specification.
 - A: Create GitHub-specific error classes extending `FacetError` with codes like 'GITHUB_RATE_LIMIT', 'GITHUB_NOT_FOUND'
 - B: Map to generic `FacetError` codes ('NOT_FOUND', 'AUTH_ERROR', 'RATE_LIMIT') without GitHub-specific classes
 
-**Answer**: *Pending*
+**Answer**: **B** - Map to generic `FacetError` codes (NOT_FOUND, AUTH_ERROR, RATE_LIMIT) without GitHub-specific error classes. This aligns with Latency's two-way uncoupling philosophy. GitHub-specific details (like remaining rate limit headers) can be included in the error's `context` or `details` field.
 
