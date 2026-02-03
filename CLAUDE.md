@@ -1,25 +1,29 @@
-# Contracts
+# Latency
 
-Shared contracts and types for the Triad ecosystem.
+Latency monitoring and performance tracking for the Tetrad ecosystem.
 
 ## Usage
 
-This package provides shared TypeScript types and interfaces used across:
-- generacy / generacy-cloud
-- humancy / humancy-cloud
-- agency
+This package provides performance monitoring, latency tracking, and metrics collection used across the ecosystem.
+
+## Development
+
+```bash
+pnpm install
+pnpm build
+```
 
 ## MCP Testing Tools
 
 For browser automation and testing capabilities, see:
-[/workspaces/triad-development/docs/MCP_TESTING_TOOLS.md](/workspaces/triad-development/docs/MCP_TESTING_TOOLS.md)
+[/workspaces/tetrad-development/docs/MCP_TESTING_TOOLS.md](/workspaces/tetrad-development/docs/MCP_TESTING_TOOLS.md)
 
 ## Development Stack
 
 For Firebase emulators and shared services:
 ```bash
-/workspaces/triad-development/scripts/stack start
-source /workspaces/triad-development/scripts/stack-env.sh
+/workspaces/tetrad-development/scripts/stack start
+source /workspaces/tetrad-development/scripts/stack-env.sh
 ```
 
-See [/workspaces/triad-development/docs/DEVELOPMENT_STACK.md](/workspaces/triad-development/docs/DEVELOPMENT_STACK.md)
+See [/workspaces/tetrad-development/docs/DEVELOPMENT_STACK.md](/workspaces/tetrad-development/docs/DEVELOPMENT_STACK.md)
