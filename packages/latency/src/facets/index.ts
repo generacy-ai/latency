@@ -17,3 +17,4 @@ export * from './state.js';
 export * from './events.js';
 export * from './secrets.js';
 export * from './dev-agent.js';
+export * from './pipeline.js';
