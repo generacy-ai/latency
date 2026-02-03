@@ -16,3 +16,4 @@ export * from './logging.js';
 export * from './state.js';
 export * from './events.js';
 export * from './secrets.js';
+export * from './dev-agent.js';
