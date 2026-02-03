@@ -9,3 +9,5 @@ export type {
   Logger,
   StateStore,
 } from './composition/index.js';
+
+export * from './facets/index.js';

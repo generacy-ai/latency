@@ -27,6 +27,7 @@ Auto-generated from all feature plans. Last updated: [DATE]
 ## Recent Changes
 
 - 004-define-composition-primitives: Added configuration
+- 003-define-core-facet-interfaces: Added configuration
 
 - 002-create-repository-structure-pnpm: Added configuration
 

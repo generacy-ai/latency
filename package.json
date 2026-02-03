@@ -1,5 +1,6 @@
 {
   "private": true,
+  "name": "latency-workspace",
   "scripts": {
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
