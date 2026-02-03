@@ -10,31 +10,31 @@
 
 ## Phase 1: Package Setup
 
-- [ ] T001 Create `packages/jira-interface/` directory with `package.json`, `tsconfig.json`, and `src/index.ts`
-- [ ] T002 [P] Create `packages/latency-plugin-jira/` directory with `package.json`, `tsconfig.json`, `vitest.config.ts`, and `src/index.ts`
+- [X] T001 Create `packages/jira-interface/` directory with `package.json`, `tsconfig.json`, and `src/index.ts`
+- [X] T002 [P] Create `packages/latency-plugin-jira/` directory with `package.json`, `tsconfig.json`, `vitest.config.ts`, and `src/index.ts`
 
 ## Phase 2: Interface Package — Types and Helpers
 
-- [ ] T003 Implement `packages/jira-interface/src/types.ts` — define `JiraIssue`, `JiraIssueSpec`, `JiraIssueType`, `JiraPriority`, `JiraStatus`, `JiraSprint`, `JiraTransition`, `JiraIssueLink`
-- [ ] T004 [P] Implement `packages/jira-interface/src/guards.ts` — `isJiraIssue` type guard checking for `key` and `projectKey`
-- [ ] T005 [P] Implement `packages/jira-interface/src/helpers.ts` — `getJiraIssueUrl` utility
-- [ ] T006 Update `packages/jira-interface/src/index.ts` to re-export all types, guards, and helpers
+- [X] T003 Implement `packages/jira-interface/src/types.ts` — define `JiraIssue`, `JiraIssueSpec`, `JiraIssueType`, `JiraPriority`, `JiraStatus`, `JiraSprint`, `JiraTransition`, `JiraIssueLink`
+- [X] T004 [P] Implement `packages/jira-interface/src/guards.ts` — `isJiraIssue` type guard checking for `key` and `projectKey`
+- [X] T005 [P] Implement `packages/jira-interface/src/helpers.ts` — `getJiraIssueUrl` utility
+- [X] T006 Update `packages/jira-interface/src/index.ts` to re-export all types, guards, and helpers
 
 ## Phase 3: Plugin Package — Core Implementation
 
-- [ ] T007 Implement `packages/latency-plugin-jira/src/http-adapter.ts` — `JiraHttpAdapter` interface and `JiraPluginOptions` type
-- [ ] T008 Implement `packages/latency-plugin-jira/src/mapper.ts` — `mapJiraResponse` and `mapJiraComment` functions mapping Jira REST API v2 JSON to domain types
-- [ ] T009 Implement `packages/latency-plugin-jira/src/jira-plugin.ts` — `JiraPlugin` class extending `AbstractIssueTrackerPlugin` with all 5 abstract method implementations (`fetchIssue`, `doCreateIssue`, `doUpdateIssue`, `doListIssues`, `doAddComment`) plus Jira-specific methods (`transitionIssue`, `getTransitions`, `linkIssues`) and `validateIssueSpec` override
-- [ ] T010 Update `packages/latency-plugin-jira/src/index.ts` to re-export `JiraPlugin`, `JiraPluginOptions`, `JiraHttpAdapter`, and all types from `@generacy-ai/jira-interface`
+- [X] T007 Implement `packages/latency-plugin-jira/src/http-adapter.ts` — `JiraHttpAdapter` interface and `JiraPluginOptions` type
+- [X] T008 Implement `packages/latency-plugin-jira/src/mapper.ts` — `mapJiraResponse` and `mapJiraComment` functions mapping Jira REST API v2 JSON to domain types
+- [X] T009 Implement `packages/latency-plugin-jira/src/jira-plugin.ts` — `JiraPlugin` class extending `AbstractIssueTrackerPlugin` with all 5 abstract method implementations (`fetchIssue`, `doCreateIssue`, `doUpdateIssue`, `doListIssues`, `doAddComment`) plus Jira-specific methods (`transitionIssue`, `getTransitions`, `linkIssues`) and `validateIssueSpec` override
+- [X] T010 Update `packages/latency-plugin-jira/src/index.ts` to re-export `JiraPlugin`, `JiraPluginOptions`, `JiraHttpAdapter`, and all types from `@generacy-ai/jira-interface`
 
 ## Phase 4: Tests
 
-- [ ] T011 Write `packages/latency-plugin-jira/__tests__/mapper.test.ts` — test `mapJiraResponse` and `mapJiraComment` with raw Jira JSON fixtures, including edge cases (missing optional fields, custom fields)
-- [ ] T012 Write `packages/latency-plugin-jira/__tests__/jira-plugin.test.ts` — test all 5 abstract method implementations and 3 Jira-specific methods using a mock `JiraHttpAdapter`, plus validation tests for `JiraIssueSpec`
+- [X] T011 Write `packages/latency-plugin-jira/__tests__/mapper.test.ts` — test `mapJiraResponse` and `mapJiraComment` with raw Jira JSON fixtures, including edge cases (missing optional fields, custom fields)
+- [X] T012 Write `packages/latency-plugin-jira/__tests__/jira-plugin.test.ts` — test all 5 abstract method implementations and 3 Jira-specific methods using a mock `JiraHttpAdapter`, plus validation tests for `JiraIssueSpec`
 
 ## Phase 5: Build Verification
 
-- [ ] T013 Run `pnpm install` to link workspace packages, then `pnpm build` and `pnpm test` across the monorepo to verify typecheck, build, and tests pass
+- [X] T013 Run `pnpm install` to link workspace packages, then `pnpm build` and `pnpm test` across the monorepo to verify typecheck, build, and tests pass
 
 ## Dependencies & Execution Order
 
