@@ -24,6 +24,19 @@ importers:
         specifier: ^3.0.0
         version: 3.2.4(@types/node@20.19.31)
 
+  packages/jira-interface:
+    dependencies:
+      '@generacy-ai/latency':
+        specifier: workspace:*
+        version: link:../latency
+    devDependencies:
+      '@types/node':
+        specifier: ^20.14.0
+        version: 20.19.31
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+
   packages/latency:
     devDependencies:
       '@types/node':
@@ -79,6 +92,28 @@ importers:
       '@generacy-ai/latency':
         specifier: workspace:*
         version: link:../latency
+    devDependencies:
+      '@types/node':
+        specifier: ^20.14.0
+        version: 20.19.31
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.0
+        version: 3.2.4(@types/node@20.19.31)
+
+  packages/latency-plugin-jira:
+    dependencies:
+      '@generacy-ai/jira-interface':
+        specifier: workspace:*
+        version: link:../jira-interface
+      '@generacy-ai/latency':
+        specifier: workspace:*
+        version: link:../latency
+      '@generacy-ai/latency-plugin-issue-tracker':
+        specifier: workspace:*
+        version: link:../latency-plugin-issue-tracker
     devDependencies:
       '@types/node':
         specifier: ^20.14.0
