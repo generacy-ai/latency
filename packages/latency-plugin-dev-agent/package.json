@@ -1,0 +1,23 @@
+{
+  "name": "@generacy-ai/latency-plugin-dev-agent",
+  "version": "0.1.0",
+  "description": "Abstract dev agent plugin providing common logic for AI agent implementations",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@generacy-ai/latency": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "@types/node": "^20.14.0",
+    "vitest": "^3.0.0"
+  }
+}
