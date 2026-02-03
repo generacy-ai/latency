@@ -12,7 +12,7 @@ Questions and answers to clarify the feature specification.
 - B: Separate timestamps Map alongside the values Map
 - C: Use a TTL cache library (e.g., lru-cache) instead of plain Map
 
-**Answer**: *Pending*
+**Answer**: **Option A** (Single Map with wrapped entries). The abstract plugins in Tier 2 should depend only on @generacy-ai/latency core with no external dependencies. A wrapped entry like { value: Issue, cachedAt: number } is simple, self-contained, and avoids the overhead of managing two maps in sync.
 
 ### Q2: Testing Framework
 **Context**: The acceptance criteria require 90%+ test coverage, but no testing framework is configured in the monorepo. The choice affects package.json setup and test file conventions.
@@ -22,7 +22,7 @@ Questions and answers to clarify the feature specification.
 - B: Jest with ts-jest or @swc/jest for TypeScript support
 - C: Node.js built-in test runner (node:test) for zero dependencies
 
-**Answer**: *Pending*
+**Answer**: **Option A** (Vitest). The execution plan explicitly lists "Set up Vitest for testing" as a deliverable for Issue #2 (repo structure), and the architecture docs reference Vitest. It's the natural fit for the ES2022/NodeNext/TypeScript setup.
 
 ### Q3: Plugin Manifest Integration
 **Context**: The existing codebase uses a PluginManifest + PluginContext pattern where plugins declare what facets they provide/require. The spec doesn't mention this integration, but concrete subclasses would need it.
@@ -31,7 +31,7 @@ Questions and answers to clarify the feature specification.
 - A: Abstract class includes a base manifest with IssueTracker facet; subclasses extend it with qualifier
 - B: Leave manifest entirely to concrete subclasses; abstract class only handles caching/validation
 
-**Answer**: *Pending*
+**Answer**: **Option B** (Leave manifest to concrete subclasses). The abstract class is Tier 2 and never gets instantiated or registered directly — only concrete subclasses register with the composition system. The abstract class's job is caching/validation.
 
 ### Q4: Error Handling Strategy
 **Context**: The codebase defines FacetError with codes (NOT_FOUND, VALIDATION, AUTH, CONFLICT). The spec introduces a separate ValidationError class. Using both could lead to inconsistent error handling across the ecosystem.
@@ -41,5 +41,5 @@ Questions and answers to clarify the feature specification.
 - B: Keep separate ValidationError class as specified, extending FacetError instead of Error
 - C: Keep ValidationError as a subclass of FacetError (best of both: specific type + ecosystem compatibility)
 
-**Answer**: *Pending*
+**Answer**: **Option C** (ValidationError as subclass of FacetError). Making ValidationError extend FacetError with code='VALIDATION' gives both ecosystem consistency and specific type checking via instanceof.
 
