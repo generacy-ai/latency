@@ -4,6 +4,8 @@
 
 ## Summary
 
+Create two packages for Claude Code integration: `latency-plugin-claude-code` (implementation extending `AbstractDevAgentPlugin` with CLI invocation via `--output-format json` and streaming support) and `claude-code-interface` (types, error codes, and type guards for consumers). Docker and MCP invocation are out of scope for this issue.
+
 ## Parent Epic
 Part of #1 (Phase 1 - Repository & Package Setup) - Phase 1C
 
@@ -41,13 +43,13 @@ export class ClaudeCodePlugin extends AbstractDevAgentPlugin {
     return this.parseResult(result);
   }
 
+  protected async doInvokeStream(prompt: string, options: InternalInvokeOptions): AsyncGenerator<StreamEvent> {
+    // Stream via claude CLI with --stream and --output-format stream-json
+  }
+
   async getCapabilities(): Promise<ClaudeCodeCapabilities> {
     // Query claude --version and capabilities
   }
-
-  // Claude Code-specific methods
-  async invokeInDocker(prompt: string, containerConfig: DockerConfig): Promise<ClaudeCodeResult>;
-  async invokeWithMCP(prompt: string, mcpServers: MCPServerConfig[]): Promise<ClaudeCodeResult>;
 }
 
 export interface ClaudeCodeConfig {
@@ -100,15 +102,24 @@ export interface ClaudeCodeCapabilities extends AgentCapabilities {
 }
 
 export function isClaudeCodeResult(result: AgentResult): result is ClaudeCodeResult;
+
+/** Claude Code-specific error codes */
+export enum ClaudeCodeErrorCode {
+  CLI_NOT_FOUND = 'CLI_NOT_FOUND',
+  AUTH_FAILURE = 'AUTH_FAILURE',
+  RATE_LIMITED = 'RATE_LIMITED',
+  PARSE_ERROR = 'PARSE_ERROR',
+}
 ```
 
 ## Tasks
 
 - [ ] Create both package directory structures
-- [ ] Implement ClaudeCodePlugin extending abstract
+- [ ] Implement ClaudeCodePlugin extending abstract with `doInvoke` using `--output-format json`
+- [ ] Implement `doInvokeStream` with Claude Code CLI streaming
 - [ ] Implement CLI invocation with execa
-- [ ] Implement Docker container invocation
 - [ ] Define Claude Code-specific types in interface package
+- [ ] Define Claude Code-specific error codes (`CLI_NOT_FOUND`, `AUTH_FAILURE`, `RATE_LIMITED`, `PARSE_ERROR`)
 - [ ] Implement type guards and helpers
 - [ ] Write tests with mocked CLI
 
@@ -124,35 +135,50 @@ export function isClaudeCodeResult(result: AgentResult): result is ClaudeCodeRes
 
 ## User Stories
 
-### US1: [Primary User Story]
+### US1: Invoke Claude Code Programmatically
 
-**As a** [user type],
-**I want** [capability],
-**So that** [benefit].
+**As a** developer building agent orchestration workflows,
+**I want** to invoke Claude Code CLI through a typed plugin interface,
+**So that** I can integrate Claude Code into automated pipelines with structured results.
 
 **Acceptance Criteria**:
-- [ ] [Criterion 1]
-- [ ] [Criterion 2]
+- [ ] Plugin invokes Claude Code CLI with `--output-format json` and returns structured `ClaudeCodeResult`
+- [ ] Streaming invocation works via `doInvokeStream`
+- [ ] Error conditions (CLI not found, auth failure, rate limit, parse error) return specific error codes
+- [ ] Type guards correctly identify `ClaudeCodeResult` instances
 
 ## Functional Requirements
 
 | ID | Requirement | Priority | Notes |
 |----|-------------|----------|-------|
-| FR-001 | [Description] | P1 | |
+| FR-001 | Invoke Claude Code CLI with `--output-format json` | P1 | Use execa |
+| FR-002 | Parse JSON output into `ClaudeCodeResult` | P1 | model, usage, modifiedFiles, toolCalls, sessionId |
+| FR-003 | Implement streaming via `doInvokeStream` | P1 | Abstract contract requirement |
+| FR-004 | Report capabilities via `getCapabilities` | P2 | version, availableModels |
+| FR-005 | Define Claude Code-specific error codes | P1 | CLI_NOT_FOUND, AUTH_FAILURE, RATE_LIMITED, PARSE_ERROR |
+| FR-006 | Type guard `isClaudeCodeResult` | P2 | |
 
 ## Success Criteria
 
 | ID | Metric | Target | Measurement |
 |----|--------|--------|-------------|
-| SC-001 | [Metric] | [Target] | [How to measure] |
+| SC-001 | Unit test coverage | >80% | Jest coverage report |
+| SC-002 | All abstract methods implemented | 100% | TypeScript compilation |
+| SC-003 | Error codes distinguishable | All 4 codes | Unit tests for each error path |
 
 ## Assumptions
 
-- [Assumption 1]
+- Claude Code CLI is installed and available at the configured path
+- CLI supports `--output-format json` flag
+- CLI supports `--stream` flag for streaming output
+- `@generacy-ai/latency-plugin-dev-agent` package is available (from #8)
 
 ## Out of Scope
 
-- [Exclusion 1]
+- Docker container invocation (`invokeInDocker`) — separate follow-up issue
+- MCP server configuration (`invokeWithMCP`) — separate follow-up issue
+- Production deployment and monitoring
+- CLI installation/update management
 
 ---
 
