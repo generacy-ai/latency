@@ -11,17 +11,25 @@ Part of #1 (Phase 1 - Repository & Package Setup)
 
 Create the initial set of core facets in `@generacy-ai/latency`. These are abstract capability interfaces that components provide and consume without knowing each other.
 
+## Clarified Decisions
+
+1. **File Path Structure**: Use `packages/latency/src/facets/` (monorepo structure). Issue #2 creates the monorepo skeleton before this work begins.
+2. **Error Handling**: Throw errors with a shared base `FacetError` class. Standard `throw` patterns, consistent `instanceof` checking, extensible via subclasses.
+3. **Pagination Pattern**: Shared `PaginatedQuery` / `PaginatedResult<T>` types as optional mixin. Facets with list operations adopt them; others (StateStore, SecretStore, Logger) don't need them.
+4. **EventBus Type Safety**: Keep `unknown` payloads as shown in architecture doc. Type-safe wrappers belong in Tier 3 interface packages, not the core EventBus.
+
 ## Tasks
 
-- [ ] Create `src/facets/issue-tracker.ts` - IssueTracker interface
-- [ ] Create `src/facets/source-control.ts` - SourceControl interface
-- [ ] Create `src/facets/decision.ts` - DecisionHandler interface
-- [ ] Create `src/facets/workflow.ts` - WorkflowEngine interface
-- [ ] Create `src/facets/logging.ts` - Logger interface
-- [ ] Create `src/facets/state.ts` - StateStore interface
-- [ ] Create `src/facets/events.ts` - EventBus interface
-- [ ] Create `src/facets/secrets.ts` - SecretStore interface
-- [ ] Create `src/facets/index.ts` - re-exports all facets
+- [ ] Create `packages/latency/src/facets/common.ts` - FacetError class, PaginatedQuery, PaginatedResult types
+- [ ] Create `packages/latency/src/facets/issue-tracker.ts` - IssueTracker interface
+- [ ] Create `packages/latency/src/facets/source-control.ts` - SourceControl interface
+- [ ] Create `packages/latency/src/facets/decision.ts` - DecisionHandler interface
+- [ ] Create `packages/latency/src/facets/workflow.ts` - WorkflowEngine interface
+- [ ] Create `packages/latency/src/facets/logging.ts` - Logger interface
+- [ ] Create `packages/latency/src/facets/state.ts` - StateStore interface
+- [ ] Create `packages/latency/src/facets/events.ts` - EventBus interface
+- [ ] Create `packages/latency/src/facets/secrets.ts` - SecretStore interface
+- [ ] Create `packages/latency/src/facets/index.ts` - re-exports all facets
 
 ## Example Interface
 
@@ -96,6 +104,7 @@ export interface Comment {
 ```
 packages/latency/src/
 ├── facets/
+│   ├── common.ts             # FacetError, PaginatedQuery, PaginatedResult<T>
 │   ├── issue-tracker.ts      # IssueTracker, Issue, IssueSpec, etc.
 │   ├── source-control.ts     # SourceControl, Commit, Branch, etc.
 │   ├── decision.ts           # DecisionHandler, Decision, DecisionResult
@@ -129,37 +138,18 @@ packages/latency/src/
 - [latency-integration-plan.md - Issue 1.2](/workspaces/tetrad-development/docs/latency-integration-plan.md)
 - [latency-architecture.md - Core Facets](/workspaces/tetrad-development/docs/latency-architecture.md)
 
-## User Stories
-
-### US1: [Primary User Story]
-
-**As a** [user type],
-**I want** [capability],
-**So that** [benefit].
-
-**Acceptance Criteria**:
-- [ ] [Criterion 1]
-- [ ] [Criterion 2]
-
-## Functional Requirements
-
-| ID | Requirement | Priority | Notes |
-|----|-------------|----------|-------|
-| FR-001 | [Description] | P1 | |
-
-## Success Criteria
-
-| ID | Metric | Target | Measurement |
-|----|--------|--------|-------------|
-| SC-001 | [Metric] | [Target] | [How to measure] |
-
 ## Assumptions
 
-- [Assumption 1]
+- Issue #2 (repo structure) is merged, providing `packages/latency/` with `tsconfig.json` and package scaffolding
+- No runtime dependencies — all facets are pure TypeScript interfaces and types
+- Facets define abstract capabilities only; concrete implementations live in separate packages
 
 ## Out of Scope
 
-- [Exclusion 1]
+- Concrete implementations of any facet interface
+- Runtime code, utility functions, or helper classes (except `FacetError`)
+- Tests (interfaces are type-only; testing comes with implementations)
+- Tier 2/3 package integration
 
 ---
 
