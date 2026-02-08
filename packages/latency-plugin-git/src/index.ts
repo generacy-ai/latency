@@ -13,7 +13,6 @@ export {
 export type {
   GitCommit,
   GitBranch,
-  GitBlame,
   GitConfig,
 } from '@generacy-ai/git-interface';
 export { isGitCommit, isGitBranch, formatCommitMessage, formatShortSha } from '@generacy-ai/git-interface';

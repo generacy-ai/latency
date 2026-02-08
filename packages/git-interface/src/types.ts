@@ -20,17 +20,6 @@ export interface GitBranch extends Branch {
 }
 
 /**
- * Git blame information for a single line.
- */
-export interface GitBlame {
-  sha: string;
-  author: string;
-  date: Date;
-  line: number;
-  content: string;
-}
-
-/**
  * Configuration for the Git plugin.
  */
 export interface GitConfig {

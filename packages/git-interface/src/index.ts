@@ -1,7 +1,6 @@
 export type {
   GitCommit,
   GitBranch,
-  GitBlame,
   GitConfig,
 } from './types.js';
 
