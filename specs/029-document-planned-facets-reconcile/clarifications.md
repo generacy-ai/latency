@@ -13,7 +13,14 @@ Questions and answers to clarify the feature specification.
 - C: Remove all - start fresh when actually needed
 - D: Other (specify which to keep/remove)
 
-**Answer**: *Pending*
+**Answer**: **A — Keep all 5 as planned**
+
+All five facets are explicitly referenced in the active roadmap:
+- **DecisionHandler** — Integration plan Phase 3.3 and execution plan Wave 6 both specify Humancy will register as a `DecisionHandler` facet provider
+- **WorkflowEngine** — Phase 3.2 and Wave 6 specify Generacy provides `WorkflowEngine`
+- **EventBus, StateStore, SecretStore** — All listed as core cross-cutting concern facets in the architecture doc's facet categories table
+
+These aren't speculative — they're defined interfaces waiting for Phase 3 consumer adoption.
 
 ### Q2: Documentation Approach
 **Context**: Multiple options exist to document facets as planned/future: JSDoc @planned tags, a planned/ subdirectory, or README documentation. Consistency is important for maintainability.
@@ -24,7 +31,9 @@ Questions and answers to clarify the feature specification.
 - C: README in facets/ explaining maturity levels (centralized documentation)
 - D: Combination: JSDoc tags + README overview
 
-**Answer**: *Pending*
+**Answer**: **D — JSDoc tags + README overview**
+
+With a nuance: the tag shouldn't be `@planned` since these facets are already defined and stable. Something like `@remarks Currently awaiting consumer adoption in Phase 3` is more accurate. The README in `facets/` can give a centralized view of which facets have active consumers (IssueTracker, SourceControl, DevAgent, etc.) vs. which are awaiting Phase 3 core updates.
 
 ### Q3: StateStore Reconciliation
 **Context**: Two StateStore interfaces exist with different semantics: async (facets/state.ts) vs sync (composition/context.ts). This creates naming confusion and potential misuse.
@@ -35,5 +44,11 @@ Questions and answers to clarify the feature specification.
 - C: Consolidate into one interface that supports both patterns
 - D: Remove async version from facets (it's unused) - keep only the sync one in context.ts
 
-**Answer**: *Pending*
+**Answer**: **A — Rename the sync version**
+
+The two serve clearly different purposes:
+- `facets/state.ts` StateStore = async, generic, for persistent storage backends (Redis, S3, etc.) — this is the public facet API matching the architecture doc
+- `composition/context.ts` StateStore = sync, for plugin-scoped in-memory state — this is an internal composition mechanism
+
+Rename the sync version to `PluginStateStore` or `ContextState` to preserve both while eliminating the naming collision. The async facet version is the architecturally important one.
 
