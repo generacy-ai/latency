@@ -20,5 +20,5 @@ export type {
   DecisionRequest,
   DecisionResult,
   Logger,
-  StateStore,
+  PluginStateStore,
 } from './context.js';

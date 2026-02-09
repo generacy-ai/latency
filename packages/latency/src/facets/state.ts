@@ -26,6 +26,10 @@
  * giving callers type-safe access without requiring the store itself to
  * enforce value schemas.
  *
+ * @remarks
+ * **Adoption Status**: This interface is defined and stable, but currently awaiting
+ * consumer adoption in Phase 3. See `facets/README.md` for the full facet maturity matrix.
+ *
  * @example
  * ```typescript
  * // Retrieve a typed value

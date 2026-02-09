@@ -7,7 +7,7 @@ export type {
   DecisionRequest,
   DecisionResult,
   Logger,
-  StateStore,
+  PluginStateStore,
 } from './composition/index.js';
 
 export * from './facets/index.js';

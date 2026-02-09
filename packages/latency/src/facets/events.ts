@@ -38,6 +38,10 @@ export type Unsubscribe = () => void;
  * Provides the three fundamental operations for event-driven communication:
  * emitting events, subscribing to events, and unsubscribing from events.
  *
+ * @remarks
+ * **Adoption Status**: This interface is defined and stable, but currently awaiting
+ * consumer adoption in Phase 3. See `facets/README.md` for the full facet maturity matrix.
+ *
  * @example
  * ```typescript
  * // Subscribe to an event
