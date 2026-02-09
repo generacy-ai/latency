@@ -177,6 +177,10 @@ export interface Decision {
  * GitHub Discussions, Slack workflows, custom approval UIs, or ADR
  * repositories.
  *
+ * @remarks
+ * **Adoption Status**: This interface is defined and stable, but currently awaiting
+ * consumer adoption in Phase 3. See `facets/README.md` for the full facet maturity matrix.
+ *
  * @example
  * ```typescript
  * // Request a decision and later resolve it

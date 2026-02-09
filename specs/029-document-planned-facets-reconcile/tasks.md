@@ -10,23 +10,23 @@
 
 ## Phase 1: Document Planned Facets
 
-- [ ] T001 [P] [US1] Add JSDoc `@remarks` to `EventBus` interface in `src/facets/events.ts`
-- [ ] T002 [P] [US1] Add JSDoc `@remarks` to `SecretStore` interface in `src/facets/secrets.ts`
-- [ ] T003 [P] [US1] Add JSDoc `@remarks` to `StateStore` interface in `src/facets/state.ts`
-- [ ] T004 [P] [US1] Add JSDoc `@remarks` to `DecisionHandler` interface in `src/facets/decision.ts`
-- [ ] T005 [P] [US1] Add JSDoc `@remarks` to `WorkflowEngine` interface in `src/facets/workflow.ts`
-- [ ] T006 [US1] Create `src/facets/README.md` with facet maturity matrix
+- [X] T001 [P] [US1] Add JSDoc `@remarks` to `EventBus` interface in `src/facets/events.ts`
+- [X] T002 [P] [US1] Add JSDoc `@remarks` to `SecretStore` interface in `src/facets/secrets.ts`
+- [X] T003 [P] [US1] Add JSDoc `@remarks` to `StateStore` interface in `src/facets/state.ts`
+- [X] T004 [P] [US1] Add JSDoc `@remarks` to `DecisionHandler` interface in `src/facets/decision.ts`
+- [X] T005 [P] [US1] Add JSDoc `@remarks` to `WorkflowEngine` interface in `src/facets/workflow.ts`
+- [X] T006 [US1] Create `src/facets/README.md` with facet maturity matrix
 
 ## Phase 2: Rename Sync StateStore
 
-- [ ] T007 [US2] Rename `StateStore` → `PluginStateStore` in `src/composition/context.ts`
-- [ ] T008 [US2] Update export in `src/composition/index.ts` to `PluginStateStore`
-- [ ] T009 [US2] Update re-export in `src/index.ts` to `PluginStateStore`
+- [X] T007 [US2] Rename `StateStore` → `PluginStateStore` in `src/composition/context.ts`
+- [X] T008 [US2] Update export in `src/composition/index.ts` to `PluginStateStore`
+- [X] T009 [US2] Update re-export in `src/index.ts` to `PluginStateStore`
 
 ## Phase 3: Verification
 
-- [ ] T010 Verify build passes with `pnpm build`
-- [ ] T011 Verify no duplicate StateStore definitions with grep
+- [X] T010 Verify build passes with `pnpm build`
+- [X] T011 Verify no duplicate StateStore definitions with grep
 
 ## Dependencies & Execution Order
 

@@ -158,6 +158,10 @@ export interface Workflow {
  * execution, monitoring, and cancellation. Implementations adapt this
  * interface to a specific orchestration backend.
  *
+ * @remarks
+ * **Adoption Status**: This interface is defined and stable, but currently awaiting
+ * consumer adoption in Phase 3. See `facets/README.md` for the full facet maturity matrix.
+ *
  * @example
  * ```typescript
  * const engine: WorkflowEngine = getWorkflowEngine();

@@ -51,8 +51,11 @@ export interface Logger {
 
 /**
  * Minimal key-value state store scoped to a plugin.
+ *
+ * This is an in-memory, synchronous state store for ephemeral plugin-scoped data.
+ * For persistent, async key-value storage, see the {@link StateStore} facet in `facets/state.ts`.
  */
-export interface StateStore {
+export interface PluginStateStore {
   /** Retrieve a value by key, or undefined if not set */
   get<T>(key: string): T | undefined;
 
@@ -130,5 +133,5 @@ export interface PluginContext {
   readonly logger: Logger;
 
   /** State store scoped to this plugin */
-  readonly state: StateStore;
+  readonly state: PluginStateStore;
 }
