@@ -18,3 +18,4 @@ export * from './events.js';
 export * from './secrets.js';
 export * from './dev-agent.js';
 export * from './pipeline.js';
+export * from './health-check.js';
