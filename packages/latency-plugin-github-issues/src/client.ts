@@ -11,6 +11,11 @@ export type OctokitCommentResponse = Awaited<
   ReturnType<InstanceType<typeof Octokit>['issues']['createComment']>
 >['data'];
 
+/** Response type for Octokit list comments operations. */
+export type OctokitListCommentsResponse = Awaited<
+  ReturnType<InstanceType<typeof Octokit>['issues']['listComments']>
+>['data'];
+
 /** Response type for Octokit list operations. */
 export type OctokitListResponse = Awaited<
   ReturnType<InstanceType<typeof Octokit>['issues']['listForRepo']>
@@ -115,6 +120,22 @@ export class GitHubClient {
         repo: this.repo,
         issue_number: issueNumber,
         body,
+      });
+      return data;
+    } catch (error) {
+      throw mapGitHubError(error);
+    }
+  }
+
+  async listComments(
+    issueNumber: number,
+  ): Promise<OctokitListCommentsResponse> {
+    try {
+      const { data } = await this.octokit.issues.listComments({
+        owner: this.owner,
+        repo: this.repo,
+        issue_number: issueNumber,
+        per_page: 100,
       });
       return data;
     } catch (error) {

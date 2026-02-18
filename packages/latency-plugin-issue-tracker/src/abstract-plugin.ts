@@ -95,6 +95,13 @@ export abstract class AbstractIssueTrackerPlugin implements IssueTracker {
   }
 
   /**
+   * List comments on an issue in chronological order.
+   */
+  async listComments(issueId: string): Promise<Comment[]> {
+    return this.doListComments(issueId);
+  }
+
+  /**
    * Invalidate cached entries. Pass an ID to clear a single entry,
    * or call with no arguments to clear the entire cache.
    */
@@ -124,6 +131,9 @@ export abstract class AbstractIssueTrackerPlugin implements IssueTracker {
 
   /** Add a comment in the backend. */
   protected abstract doAddComment(issueId: string, comment: string): Promise<Comment>;
+
+  /** List comments from the backend. */
+  protected abstract doListComments(issueId: string): Promise<Comment[]>;
 
   // -------------------------------------------------------------------------
   // Validation helpers (overridable by subclasses)

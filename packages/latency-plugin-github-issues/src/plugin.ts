@@ -94,6 +94,12 @@ export class GitHubIssuesPlugin extends AbstractIssueTrackerPlugin {
     return mapToComment(data);
   }
 
+  protected async doListComments(issueId: string): Promise<Comment[]> {
+    const number = this.parseIssueNumber(issueId);
+    const data = await this.client.listComments(number);
+    return data.map(mapToComment);
+  }
+
   /**
    * Link a pull request to an issue by adding a cross-reference comment.
    * GitHub automatically renders bidirectional references.

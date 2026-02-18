@@ -210,4 +210,14 @@ export interface IssueTracker {
    *   given identifier.
    */
   addComment(issueId: string, comment: string): Promise<Comment>;
+
+  /**
+   * List comments on an existing issue in chronological order.
+   *
+   * @param issueId - The unique identifier of the issue.
+   * @returns All comments on the issue, ordered by creation time.
+   * @throws {FacetError} With code `'NOT_FOUND'` if no issue exists for the
+   *   given identifier.
+   */
+  listComments(issueId: string): Promise<Comment[]>;
 }
