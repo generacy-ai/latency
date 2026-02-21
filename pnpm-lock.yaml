@@ -21,7 +21,7 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
       vitest:
-        specifier: ^3.0.0
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.31)
 
   packages/git-interface:
@@ -37,7 +37,7 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
       vitest:
-        specifier: ^3.0.0
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.31)
 
   packages/github-actions-interface:
@@ -65,7 +65,7 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
       vitest:
-        specifier: ^3.0.0
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.31)
 
   packages/jira-interface:
@@ -112,7 +112,7 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
       vitest:
-        specifier: ^3.0.0
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.31)
 
   packages/latency-plugin-dev-agent:
@@ -128,7 +128,7 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
       vitest:
-        specifier: ^3.0.0
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.31)
 
   packages/latency-plugin-git:
@@ -153,7 +153,7 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
       vitest:
-        specifier: ^3.0.0
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.31)
 
   packages/latency-plugin-github-actions:
@@ -178,7 +178,7 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
       vitest:
-        specifier: ^3.0.0
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.31)
 
   packages/latency-plugin-github-issues:
@@ -203,7 +203,7 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
       vitest:
-        specifier: ^3.0.0
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.31)
 
   packages/latency-plugin-health-check:
@@ -219,7 +219,7 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
       vitest:
-        specifier: ^3.0.0
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.31)
 
   packages/latency-plugin-issue-tracker:
@@ -235,7 +235,7 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
       vitest:
-        specifier: ^3.0.0
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.31)
 
   packages/latency-plugin-jira:
@@ -257,7 +257,7 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
       vitest:
-        specifier: ^3.0.0
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.31)
 
   packages/latency-plugin-source-control:
@@ -273,7 +273,7 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
       vitest:
-        specifier: ^3.0.0
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.31)
 
   packages/plugin-ci-cd:
@@ -288,7 +288,7 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
       vitest:
-        specifier: ^3.0.0
+        specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.31)
 
 packages:
