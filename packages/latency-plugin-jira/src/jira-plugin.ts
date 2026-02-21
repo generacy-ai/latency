@@ -174,6 +174,13 @@ export class JiraPlugin extends AbstractIssueTrackerPlugin {
     };
   }
 
+  protected async doListComments(issueId: string): Promise<Comment[]> {
+    const raw = await this.http.get<{ comments: unknown[] }>(
+      `/rest/api/2/issue/${issueId}/comment`,
+    );
+    return raw.comments.map(mapJiraComment);
+  }
+
   protected async doAddComment(
     issueId: string,
     comment: string,
