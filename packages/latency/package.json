@@ -5,6 +5,44 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./protocols": {
+      "import": "./dist/protocols/index.js",
+      "types": "./dist/protocols/index.d.ts"
+    },
+    "./protocols/common": {
+      "import": "./dist/protocols/common/index.js",
+      "types": "./dist/protocols/common/index.d.ts"
+    },
+    "./protocols/orchestration": {
+      "import": "./dist/protocols/orchestration/index.js",
+      "types": "./dist/protocols/orchestration/index.d.ts"
+    },
+    "./protocols/agency-generacy": {
+      "import": "./dist/protocols/agency-generacy/index.js",
+      "types": "./dist/protocols/agency-generacy/index.d.ts"
+    },
+    "./protocols/agency-humancy": {
+      "import": "./dist/protocols/agency-humancy/index.js",
+      "types": "./dist/protocols/agency-humancy/index.d.ts"
+    },
+    "./protocols/generacy-humancy": {
+      "import": "./dist/protocols/generacy-humancy/index.js",
+      "types": "./dist/protocols/generacy-humancy/index.d.ts"
+    },
+    "./protocols/telemetry": {
+      "import": "./dist/protocols/telemetry/index.js",
+      "types": "./dist/protocols/telemetry/index.d.ts"
+    },
+    "./protocols/version-compatibility": {
+      "import": "./dist/protocols/version-compatibility/index.js",
+      "types": "./dist/protocols/version-compatibility/index.d.ts"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -12,10 +50,15 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit",
-    "test": "echo 'No tests yet'"
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^3.23.8",
+    "ulid": "^3.0.2"
   },
   "devDependencies": {
     "typescript": "^5.4.5",
-    "@types/node": "^20.14.0"
+    "@types/node": "^20.14.0",
+    "zod-to-json-schema": "^3.23.5"
   }
 }

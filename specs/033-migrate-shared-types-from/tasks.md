@@ -12,27 +12,27 @@
 
 ## Phase 1: Infrastructure Setup
 
-### T001 Add runtime and dev dependencies to package.json
+### T001 [DONE] Add runtime and dev dependencies to package.json
 **File**: `packages/latency/package.json`
 - Add `zod@^3.23.8` to `dependencies`
 - Add `ulid@^3.0.2` to `dependencies`
 - Add `zod-to-json-schema@^3.23.5` to `devDependencies`
 - Run `pnpm install` to install and update lockfile
 
-### T002 Configure subpath exports in package.json
+### T002 [DONE] Configure subpath exports in package.json
 **File**: `packages/latency/package.json`
 - Add `exports` field with root `.` entry (preserving backward compat via `main`/`types`)
 - Add 8 protocol subpath entries: `./protocols`, `./protocols/common`, `./protocols/orchestration`, `./protocols/agency-generacy`, `./protocols/agency-humancy`, `./protocols/generacy-humancy`, `./protocols/telemetry`, `./protocols/version-compatibility`
 - Each entry needs both `import` and `types` conditions pointing to `./dist/protocols/<domain>/index.js` and `./dist/protocols/<domain>/index.d.ts`
 
-### T003 Create vitest configuration
+### T003 [DONE] Create vitest configuration
 **Files**:
 - `packages/latency/vitest.config.ts`
 - `packages/latency/package.json` (update `test` script)
 - Create vitest config with `include: ['__tests__/**/*.test.ts']`
 - Update `test` script from `echo 'No tests yet'` to `vitest run`
 
-### T004 Create directory structure for source and tests
+### T004 [DONE] Create directory structure for source and tests
 **Directories**:
 - `packages/latency/src/protocols/`
 - `packages/latency/src/protocols/common/`
@@ -50,7 +50,7 @@
 - `packages/latency/__tests__/protocols/telemetry/`
 - `packages/latency/__tests__/protocols/version-compatibility/`
 
-### T005 Verify clean build with empty protocol directories
+### T005 [DONE] Verify clean build with empty protocol directories
 **Command**: `pnpm build` in `packages/latency/`
 - Ensure `tsc` still compiles successfully with the new directory structure
 - Verify existing `dist/` output is unaffected
@@ -61,7 +61,7 @@
 
 All other domains depend on `common/`, so this must complete first.
 
-### T006 Copy and adapt common source files (10 files)
+### T006 [DONE] Copy and adapt common source files (10 files)
 **Source**: `/workspaces/contracts/src/common/`
 **Target**: `packages/latency/src/protocols/common/`
 **Files to copy**:
@@ -78,14 +78,14 @@ All other domains depend on `common/`, so this must complete first.
 - Verify all imports use `.js` extensions (contracts already does this)
 - Verify `zod` and `ulid` imports resolve after T001
 
-### T007 Create common barrel export
+### T007 [DONE] Create common barrel export
 **File**: `packages/latency/src/protocols/common/index.ts`
 - Copy from `/workspaces/contracts/src/common/index.ts`
 - Exports 3 public IDs (CorrelationId, RequestId, SessionId) + schemas + generators
 - Exports timestamps, pagination, errors, urgency, config, message-envelope, version, capability, extended-meta
 - All 8 ID types exist in ids.ts but only 3 are re-exported publicly
 
-### T008 Migrate common test files (5 files)
+### T008 [DONE] Migrate common test files (5 files)
 **Source**: `/workspaces/contracts/src/common/__tests__/`
 **Target**: `packages/latency/__tests__/protocols/common/`
 **Files**:
@@ -96,7 +96,7 @@ All other domains depend on `common/`, so this must complete first.
 - `version.test.ts`
 - Update import paths from `../ids.js` → `../../../src/protocols/common/ids.js` (or appropriate relative depth)
 
-### T009 Verify common types build and tests pass
+### T009 [DONE] Verify common types build and tests pass
 - Run `pnpm build` — all common types compile
 - Run `pnpm test` — all 5 common test files pass
 - Fix any TypeScript strictness differences (latency's config vs contracts' config)
@@ -107,7 +107,7 @@ All other domains depend on `common/`, so this must complete first.
 
 Depends on Phase 2 (imports from `../common/`).
 
-### T010 Copy and adapt orchestration source files (4 files)
+### T010 [DONE] Copy and adapt orchestration source files (4 files)
 **Source**: `/workspaces/contracts/src/orchestration/`
 **Target**: `packages/latency/src/protocols/orchestration/`
 **Files**:
@@ -117,12 +117,12 @@ Depends on Phase 2 (imports from `../common/`).
 - `work-item.ts` — Work unit definitions and states
 - Update inter-domain imports: `../common/` paths remain valid since sibling structure is preserved
 
-### T011 Create orchestration barrel export
+### T011 [DONE] Create orchestration barrel export
 **File**: `packages/latency/src/protocols/orchestration/index.ts`
 - Copy from `/workspaces/contracts/src/orchestration/index.ts`
 - Uses `export *` pattern for all 4 modules
 
-### T012 Migrate orchestration test files (4 files)
+### T012 [DONE] Migrate orchestration test files (4 files)
 **Source**: `/workspaces/contracts/src/orchestration/__tests__/`
 **Target**: `packages/latency/__tests__/protocols/orchestration/`
 **Files**:
@@ -132,7 +132,7 @@ Depends on Phase 2 (imports from `../common/`).
 - `work-item.test.ts`
 - Update import paths to point to new source locations
 
-### T013 Verify orchestration build and tests pass
+### T013 [DONE] Verify orchestration build and tests pass
 - Run `pnpm build` — orchestration types compile
 - Run `pnpm test` — orchestration tests pass
 
@@ -143,7 +143,7 @@ Depends on Phase 2 (imports from `../common/`).
 Depends on Phase 2 (common) and Phase 3 (orchestration, for some cross-refs).
 Steps 4.1–4.3 can run in parallel within this phase, but 4.3 (generacy-humancy) depends on 4.2 (agency-humancy) because it imports from `../agency-humancy/`.
 
-### T014 [P] Copy and adapt agency-generacy source files (5 files)
+### T014 [DONE] [P] Copy and adapt agency-generacy source files (5 files)
 **Source**: `/workspaces/contracts/src/agency-generacy/`
 **Target**: `packages/latency/src/protocols/agency-generacy/`
 **Files**:
@@ -154,12 +154,12 @@ Steps 4.1–4.3 can run in parallel within this phase, but 4.3 (generacy-humancy
 - `channel-registration.ts` — Channel/endpoint registration schemas
 - Dependencies: imports from `../common/` (version utilities, capabilities)
 
-### T015 [P] Create agency-generacy barrel export
+### T015 [DONE] [P] Create agency-generacy barrel export
 **File**: `packages/latency/src/protocols/agency-generacy/index.ts`
 - Copy from `/workspaces/contracts/src/agency-generacy/index.ts`
 - Selective exports with explicit value/type separation (not `export *`)
 
-### T016 [P] Migrate agency-generacy test files (5 files)
+### T016 [DONE] [P] Migrate agency-generacy test files (5 files)
 **Source**: `/workspaces/contracts/src/agency-generacy/__tests__/`
 **Target**: `packages/latency/__tests__/protocols/agency-generacy/`
 **Files**:
@@ -170,7 +170,7 @@ Steps 4.1–4.3 can run in parallel within this phase, but 4.3 (generacy-humancy
 - `channel-registration.test.ts`
 - Update import paths
 
-### T017 Copy and adapt agency-humancy source files (6 files)
+### T017 [DONE] Copy and adapt agency-humancy source files (6 files)
 **Source**: `/workspaces/contracts/src/agency-humancy/`
 **Target**: `packages/latency/src/protocols/agency-humancy/`
 **Files**:
@@ -183,13 +183,13 @@ Steps 4.1–4.3 can run in parallel within this phase, but 4.3 (generacy-humancy
 - Key pattern: Versioned namespace pattern (`DecisionRequest.V1`, `DecisionRequest.Latest`) — preserve as-is
 - Dependencies: imports from `../common/` (ExtendedMeta, IDs, timestamps)
 
-### T018 Create agency-humancy barrel export
+### T018 [DONE] Create agency-humancy barrel export
 **File**: `packages/latency/src/protocols/agency-humancy/index.ts`
 - Copy from `/workspaces/contracts/src/agency-humancy/index.ts`
 - Re-exports ExtendedMeta from `../common/extended-meta.js`
 - Selective exports with value/type separation for versioned namespaces
 
-### T019 Migrate agency-humancy test files (7 files)
+### T019 [DONE] Migrate agency-humancy test files (7 files)
 **Source**: `/workspaces/contracts/tests/` (root-level, NOT co-located)
 **Target**: `packages/latency/__tests__/protocols/agency-humancy/`
 **Files**:
@@ -202,7 +202,7 @@ Steps 4.1–4.3 can run in parallel within this phase, but 4.3 (generacy-humancy
 - `extensibility-patterns.test.ts`
 - Update import paths — these tests originally imported from package root, need to point to `../../../src/protocols/agency-humancy/index.js`
 
-### T020 Copy and adapt generacy-humancy source files (6 files)
+### T020 [DONE] Copy and adapt generacy-humancy source files (6 files)
 **Source**: `/workspaces/contracts/src/generacy-humancy/`
 **Target**: `packages/latency/src/protocols/generacy-humancy/`
 **Files**:
@@ -215,12 +215,12 @@ Steps 4.1–4.3 can run in parallel within this phase, but 4.3 (generacy-humancy
 - Dependencies: imports from `../agency-humancy/` (DecisionOption types) and `../common/` (timestamps, IDs)
 - **Must complete T017–T018 first** (depends on agency-humancy)
 
-### T021 Create generacy-humancy barrel export
+### T021 [DONE] Create generacy-humancy barrel export
 **File**: `packages/latency/src/protocols/generacy-humancy/index.ts`
 - Copy from `/workspaces/contracts/src/generacy-humancy/index.ts`
 - Uses `export *` pattern for all 6 modules
 
-### T022 Migrate generacy-humancy test files (6 files)
+### T022 [DONE] Migrate generacy-humancy test files (6 files)
 **Source**: `/workspaces/contracts/src/generacy-humancy/__tests__/`
 **Target**: `packages/latency/__tests__/protocols/generacy-humancy/`
 **Files**:
@@ -232,7 +232,7 @@ Steps 4.1–4.3 can run in parallel within this phase, but 4.3 (generacy-humancy
 - `notification.test.ts`
 - Update import paths
 
-### T023 Verify cross-component build and tests pass
+### T023 [DONE] Verify cross-component build and tests pass
 - Run `pnpm build` — all 3 cross-component domains compile
 - Run `pnpm test` — all cross-component tests pass (agency-generacy, agency-humancy, generacy-humancy)
 
@@ -242,7 +242,7 @@ Steps 4.1–4.3 can run in parallel within this phase, but 4.3 (generacy-humancy
 
 Depends on Phase 2 (common). T024–T027 and T028–T031 can run in parallel.
 
-### T024 [P] Copy and adapt telemetry source files (5 files)
+### T024 [DONE] [P] Copy and adapt telemetry source files (5 files)
 **Source**: `/workspaces/contracts/src/telemetry/`
 **Target**: `packages/latency/src/protocols/telemetry/`
 **Files**:
@@ -253,12 +253,12 @@ Depends on Phase 2 (common). T024–T027 and T028–T031 can run in parallel.
 - `tool-stats.ts` — ToolStats schema
 - Dependencies: imports from `../common/` (timestamps, IDs)
 
-### T025 [P] Create telemetry barrel export
+### T025 [DONE] [P] Create telemetry barrel export
 **File**: `packages/latency/src/protocols/telemetry/index.ts`
 - Copy from `/workspaces/contracts/src/telemetry/index.ts`
 - Selective exports: ErrorCategory, TimeWindow, ToolCallEvent, AnonymousToolMetric, ToolStats
 
-### T026 [P] Migrate telemetry test files (5 files)
+### T026 [DONE] [P] Migrate telemetry test files (5 files)
 **Source**: `/workspaces/contracts/src/telemetry/__tests__/`
 **Target**: `packages/latency/__tests__/protocols/telemetry/`
 **Files**:
@@ -269,11 +269,11 @@ Depends on Phase 2 (common). T024–T027 and T028–T031 can run in parallel.
 - `tool-stats.test.ts`
 - Update import paths
 
-### T027 [P] Verify telemetry build and tests pass
+### T027 [DONE] [P] Verify telemetry build and tests pass
 - Run `pnpm build` — telemetry types compile
 - Run `pnpm test` — telemetry tests pass
 
-### T028 [P] Copy and adapt version-compatibility source files (3 files)
+### T028 [DONE] [P] Copy and adapt version-compatibility source files (3 files)
 **Source**: `/workspaces/contracts/src/version-compatibility/`
 **Target**: `packages/latency/src/protocols/version-compatibility/`
 **Files**:
@@ -282,12 +282,12 @@ Depends on Phase 2 (common). T024–T027 and T028–T031 can run in parallel.
 - `deprecation-warnings.ts` — collectDeprecationWarnings, formatDeprecationMessage(s), hasDeprecatedCapabilities, getDeprecationReplacements
 - Dependencies: heavy imports from `../common/` (Capability, CapabilityConfig, DeprecationInfo, version utilities)
 
-### T029 [P] Create version-compatibility barrel export
+### T029 [DONE] [P] Create version-compatibility barrel export
 **File**: `packages/latency/src/protocols/version-compatibility/index.ts`
 - Copy from `/workspaces/contracts/src/version-compatibility/index.ts`
 - Selective exports with JSDoc comments preserved
 
-### T030 [P] Migrate version-compatibility test files (5 files)
+### T030 [DONE] [P] Migrate version-compatibility test files (5 files)
 **Source**: `/workspaces/contracts/src/version-compatibility/__tests__/`
 **Target**: `packages/latency/__tests__/protocols/version-compatibility/`
 **Files**:
