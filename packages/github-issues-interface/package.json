@@ -1,6 +1,7 @@
 {
   "name": "@generacy-ai/github-issues-interface",
   "version": "0.1.0",
+  "license": "Apache-2.0",
   "description": "GitHub Issues interface types and utilities for the Latency ecosystem",
   "type": "module",
   "main": "dist/index.js",

@@ -1,6 +1,7 @@
 {
   "name": "@generacy-ai/github-actions-interface",
   "version": "0.1.0",
+  "license": "Apache-2.0",
   "description": "TypeScript type definitions for GitHub Actions concepts extending core Latency types",
   "type": "module",
   "main": "dist/index.js",

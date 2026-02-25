@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "latency-workspace",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
