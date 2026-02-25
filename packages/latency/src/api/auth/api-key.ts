@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ulid } from 'ulid';
-import { ISOTimestampSchema } from '../../../common/timestamps.js';
+import { ISOTimestampSchema } from '../../common/timestamps.js';
 import { OAuth2ScopeSchema } from './auth-token.js';
 
 // ULID regex: 26 characters, Crockford Base32

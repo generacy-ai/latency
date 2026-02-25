@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ISOTimestampSchema } from '../../../common/timestamps.js';
+import { ISOTimestampSchema } from '../../common/timestamps.js';
 import { ResetPeriodSchema } from './feature-entitlement.js';
 
 /**

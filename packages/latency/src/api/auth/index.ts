@@ -40,4 +40,4 @@ export {
 } from './session.js';
 
 // Re-export SessionId type from common for convenience
-export type { SessionId } from '../../../common/ids.js';
+export type { SessionId } from '../../common/ids.js';

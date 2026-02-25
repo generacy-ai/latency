@@ -14,19 +14,19 @@
 
 Ensure all 16 packages have uniform scripts and dependency declarations before CI can run `pnpm lint`, `pnpm test`, and `pnpm build` across the monorepo without failures.
 
-### T001 [P] Add missing `lint` script to `latency-plugin-source-control`
+### T001 [DONE] [P] Add missing `lint` script to `latency-plugin-source-control`
 **File**: `packages/latency-plugin-source-control/package.json`
 - Add `"lint": "tsc --noEmit"` to the `scripts` section
 - Matches the pattern used by all other 15 packages
 
-### T002 [P] Add missing `test` scripts to `github-actions-interface` and `jira-interface`
+### T002 [DONE] [P] Add missing `test` scripts to `github-actions-interface` and `jira-interface`
 **Files**:
 - `packages/github-actions-interface/package.json`
 - `packages/jira-interface/package.json`
 - Add `"test": "echo 'No tests yet'"` to the `scripts` section of both packages
 - These are the only 2 packages missing a `test` script
 
-### T003 [P] Convert peerDependencies from fixed ranges to `workspace:^`
+### T003 [DONE] [P] Convert peerDependencies from fixed ranges to `workspace:^`
 **Files**:
 - `packages/github-actions-interface/package.json` — `@generacy-ai/latency`
 - `packages/plugin-ci-cd/package.json` — `@generacy-ai/latency`
@@ -34,7 +34,7 @@ Ensure all 16 packages have uniform scripts and dependency declarations before C
 - Change all `"^0.1.0"` peerDependency versions to `"workspace:^"`
 - Changesets will auto-resolve these to real version ranges on publish
 
-### T004 [P] Add `publishConfig` to all 16 packages
+### T004 [DONE] [P] Add `publishConfig` to all 16 packages
 **Files**:
 - `packages/latency/package.json`
 - `packages/claude-code-interface/package.json`
@@ -61,19 +61,19 @@ Ensure all 16 packages have uniform scripts and dependency declarations before C
 
 Set up the changesets CLI and configuration for version management and changelog generation.
 
-### T005 Install `@changesets/cli` as root devDependency
+### T005 [DONE] Install `@changesets/cli` as root devDependency
 **File**: `package.json` (root)
 - Run `pnpm add -Dw @changesets/cli`
 - This updates root `package.json` and `pnpm-lock.yaml`
 
-### T006 Create `.changeset/config.json`
+### T006 [DONE] Create `.changeset/config.json`
 **File**: `.changeset/config.json`
 - Create with `baseBranch: "develop"`, `access: "public"`
 - Set `commit: false`, `updateInternalDependencies: "patch"`
 - Leave `fixed: []` and `linked: []` empty (no package grouping)
 - Use `"changelog": "@changesets/cli/changelog"` for changelog generation
 
-### T007 [P] Create `.changeset/README.md`
+### T007 [DONE] [P] Create `.changeset/README.md`
 **File**: `.changeset/README.md`
 - Standard changesets README explaining what changesets are and how they work
 - This is the conventional file created by `changeset init`
@@ -82,7 +82,7 @@ Set up the changesets CLI and configuration for version management and changelog
 
 ## Phase 3: Create CI Workflow
 
-### T008 Create `.github/workflows/ci.yml`
+### T008 [DONE] Create `.github/workflows/ci.yml`
 **File**: `.github/workflows/ci.yml`
 - Trigger on `pull_request` (all branches) and `push` to `develop`/`main`
 - Add `concurrency` group with `cancel-in-progress: true`
@@ -94,7 +94,7 @@ Set up the changesets CLI and configuration for version management and changelog
 
 ## Phase 4: Create Preview Publish Workflow
 
-### T009 Create `.github/workflows/publish-preview.yml`
+### T009 [DONE] Create `.github/workflows/publish-preview.yml`
 **File**: `.github/workflows/publish-preview.yml`
 - Trigger via `workflow_run` chained after CI on `develop` branch
 - Guard with `if: conclusion == 'success' && event == 'push'`
@@ -106,7 +106,7 @@ Set up the changesets CLI and configuration for version management and changelog
 
 ## Phase 5: Create Stable Release Workflow
 
-### T010 Create `.github/workflows/release.yml`
+### T010 [DONE] Create `.github/workflows/release.yml`
 **File**: `.github/workflows/release.yml`
 - Trigger on `push` to `main`
 - Add `concurrency` group with `cancel-in-progress: false` (never cancel a release)
@@ -118,19 +118,19 @@ Set up the changesets CLI and configuration for version management and changelog
 
 ## Phase 6: Validation
 
-### T011 Run `pnpm lint`, `pnpm test`, and `pnpm build` locally
+### T011 [DONE] Run `pnpm lint`, `pnpm test`, and `pnpm build` locally
 **Commands**:
 - `pnpm lint` — verify all 16 packages have lint scripts and pass
 - `pnpm test` — verify all 16 packages have test scripts and pass
 - `pnpm build` — verify all packages build successfully
 - All three must pass for CI workflow to succeed
 
-### T012 Validate changesets configuration
+### T012 [DONE] Validate changesets configuration
 **Commands**:
 - `pnpm changeset status` — verify changesets recognizes the config and all packages
 - Confirm no errors about missing packages or invalid config
 
-### T013 Validate workflow YAML syntax
+### T013 [DONE] Validate workflow YAML syntax
 **Files**:
 - `.github/workflows/ci.yml`
 - `.github/workflows/publish-preview.yml`

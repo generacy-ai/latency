@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { ISOTimestampSchema } from '../../../common/timestamps.js';
-import { SessionIdSchema, generateSessionId } from '../../../common/ids.js';
+import { ISOTimestampSchema } from '../../common/timestamps.js';
+import { SessionIdSchema, generateSessionId } from '../../common/ids.js';
 
 // Re-export SessionId types from common/ids for convenience
 export { SessionIdSchema, generateSessionId };
-export type { SessionId } from '../../../common/ids.js';
+export type { SessionId } from '../../common/ids.js';
 
 // ULID regex for validation
 const ULID_REGEX = /^[0-9A-HJKMNP-TV-Z]{26}$/;

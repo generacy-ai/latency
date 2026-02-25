@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { ISOTimestampSchema } from '../../../common/timestamps.js';
-import { OrganizationIdSchema, generateOrganizationId } from '../../../common/ids.js';
+import { ISOTimestampSchema } from '../../common/timestamps.js';
+import { OrganizationIdSchema, generateOrganizationId } from '../../common/ids.js';
 
 // Re-export OrganizationId types from common/ids for convenience
 export { OrganizationIdSchema, generateOrganizationId };
-export type { OrganizationId } from '../../../common/ids.js';
+export type { OrganizationId } from '../../common/ids.js';
 
 // ULID regex for validation
 const ULID_REGEX = /^[0-9A-HJKMNP-TV-Z]{26}$/;

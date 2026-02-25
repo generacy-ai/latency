@@ -86,7 +86,8 @@ describe('Three Layer Decision Schemas', () => {
   });
 
   describe('ThreeLayerDecisionSchema', () => {
-    const createValidDecision = () => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const createValidDecision = (): any => ({
       id: 'tld_decision01',
       request: {
         id: 'dreq_request01',

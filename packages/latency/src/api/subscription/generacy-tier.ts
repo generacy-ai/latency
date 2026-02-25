@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ulid } from 'ulid';
-import { ISOTimestampSchema } from '../../../common/timestamps.js';
+import { ISOTimestampSchema } from '../../common/timestamps.js';
 import { FeatureEntitlementSchema } from './feature-entitlement.js';
 import { SubscriptionStatusSchema } from './humancy-tier.js';
 

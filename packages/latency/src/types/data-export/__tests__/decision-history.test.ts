@@ -87,8 +87,12 @@ describe('Decision History Export Schemas', () => {
       title: 'Choose database technology',
       baseline: { optionId: 'dopt_001', confidence: 0.7 },
       protege: { optionId: 'dopt_002', confidence: 0.85 },
-      humanDecision: { optionId: 'dopt_002' },
-      outcome: 'positive',
+      humanDecision: { optionId: 'dopt_002' } as {
+        optionId: string;
+        wasOverride?: boolean;
+        reasoning?: string;
+      },
+      outcome: 'positive' as string,
     });
 
     it('should accept valid decision record', () => {

@@ -11,6 +11,7 @@ import {
   generateCoachingFeedbackId,
   createCoachingFeedback,
 } from '../feedback.js';
+import type { ISOTimestamp } from '../../../../common/timestamps.js';
 
 describe('CoachingFeedbackIdSchema', () => {
   it('accepts valid ULID format', () => {
@@ -352,7 +353,7 @@ describe('createCoachingFeedback', () => {
   });
 
   it('allows partial timestamp override', () => {
-    const customDecisionAt = '2024-01-15T09:00:00Z';
+    const customDecisionAt = '2024-01-15T09:00:00Z' as ISOTimestamp;
     const feedback = createCoachingFeedback({
       decisionId: 'dec_123',
       overrideReason: 'other',

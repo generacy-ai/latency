@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ISOTimestampSchema } from '../../../common/timestamps.js';
+import { ISOTimestampSchema } from '../../common/timestamps.js';
 
 /**
  * OAuth2 token types supported by the platform.
