@@ -1,6 +1,7 @@
 {
   "name": "@generacy-ai/latency-plugin-dev-agent",
   "version": "0.1.0",
+  "license": "Apache-2.0",
   "description": "Abstract dev agent plugin providing common logic for AI agent implementations",
   "type": "module",
   "main": "dist/index.js",

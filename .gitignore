@@ -31,3 +31,6 @@ coverage/
 
 # TypeScript cache
 *.tsbuildinfo
+
+# Secrets scan reports
+gitleaks-report.json

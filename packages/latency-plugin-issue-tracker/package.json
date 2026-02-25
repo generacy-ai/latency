@@ -1,6 +1,7 @@
 {
   "name": "@generacy-ai/latency-plugin-issue-tracker",
   "version": "0.1.0",
+  "license": "Apache-2.0",
   "description": "Abstract issue tracker plugin for the Latency ecosystem",
   "type": "module",
   "main": "dist/index.js",
