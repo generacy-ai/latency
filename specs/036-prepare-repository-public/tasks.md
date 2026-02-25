@@ -12,18 +12,18 @@
 
 ## Phase 1: LICENSE File and package.json Updates
 
-### T001 Create LICENSE file at repo root
+### T001 [DONE] Create LICENSE file at repo root
 **File**: `LICENSE`
 - Create `LICENSE` file with the full Apache License 2.0 text
 - Copyright line: `Copyright 2026 The Generacy AI Authors`
 - Use the standard text from https://www.apache.org/licenses/LICENSE-2.0
 
-### T002 [P] Add `"license": "Apache-2.0"` to root package.json
+### T002 [DONE] [P] Add `"license": "Apache-2.0"` to root package.json
 **File**: `package.json`
 - Add `"license": "Apache-2.0"` field after the `"name"` field
 - Use the SPDX identifier `Apache-2.0`
 
-### T003 [P] Add `"license": "Apache-2.0"` to all 16 package-level package.json files
+### T003 [DONE] [P] Add `"license": "Apache-2.0"` to all 16 package-level package.json files
 **Files**:
 - `packages/latency/package.json`
 - `packages/latency-plugin-dev-agent/package.json`
@@ -43,7 +43,7 @@
 - `packages/claude-code-interface/package.json`
 - Add `"license": "Apache-2.0"` to each file using SPDX identifier
 
-### T004 Verify Phase 1 artifacts
+### T004 [DONE] Verify Phase 1 artifacts
 - Confirm `LICENSE` file exists and contains "Apache License" and "2026 The Generacy AI Authors"
 - Confirm all 17 `package.json` files contain `"license": "Apache-2.0"`
 
@@ -51,7 +51,7 @@
 
 ## Phase 2: SECURITY.md
 
-### T005 Create SECURITY.md at repo root
+### T005 [DONE] Create SECURITY.md at repo root
 **File**: `SECURITY.md`
 - **Supported Versions**: State that the project is pre-1.0; security fixes apply only to the latest release on the main branch
 - **Reporting a Vulnerability**: Primary channel is GitHub Security Advisories; fallback email `security@generacy.ai`
@@ -59,7 +59,7 @@
 - **Disclosure Policy**: Coordinated disclosure; reporters asked to allow reasonable time for fixes
 - **Scope**: In scope — code in this repository, published npm packages; out of scope — third-party dependencies, GitHub infrastructure
 
-### T006 Verify SECURITY.md
+### T006 [DONE] Verify SECURITY.md
 - Confirm file exists at repo root
 - Confirm it contains: "pre-1.0", "security@generacy.ai", "5 business days"
 
@@ -67,13 +67,13 @@
 
 ## Phase 3: .github/CODEOWNERS
 
-### T007 Create .github/CODEOWNERS file
+### T007 [DONE] Create .github/CODEOWNERS file
 **File**: `.github/CODEOWNERS`
 - Create `.github/` directory if it does not exist
 - Add single default owner rule: `* @generacy-ai/core-team`
 - Include a comment header explaining the file
 
-### T008 Validate CODEOWNERS team existence
+### T008 [DONE] Validate CODEOWNERS team existence
 - Run `gh api orgs/generacy-ai/teams/core-team` to verify the team exists
 - If the team does not exist, document the fallback plan (create team or substitute valid usernames)
 
@@ -81,37 +81,37 @@
 
 ## Phase 4: Secrets Audit with gitleaks
 
-### T009 Install gitleaks
+### T009 [DONE] Install gitleaks
 - Install gitleaks via binary download or package manager
 - Verify installation with `gitleaks version`
 
-### T010 Create .gitleaks.toml configuration
+### T010 [DONE] Create .gitleaks.toml configuration
 **File**: `.gitleaks.toml`
 - Create baseline gitleaks configuration at repo root
 - Include global allowlist for `pnpm-lock.yaml` and `.gitleaks.toml`
 - Keep allowlist minimal; expand during triage (T012)
 
-### T011 Run full git history scan
+### T011 [DONE] Run full git history scan
 - Execute: `gitleaks detect --source . --verbose --report-format json --report-path gitleaks-report.json`
 - This scans all commits in the repository history
 - Capture output and exit code
 
-### T012 Triage scan findings
+### T012 [DONE] Triage scan findings
 - Review each finding from the gitleaks report
 - **True positives** (real secrets): Document file, commit, and secret type — flag for maintainer approval before any history rewrite
 - **False positives**: Add to `.gitleaks.toml` allowlist as path or fingerprint exclusions
 
-### T013 Re-run scan to confirm clean result
+### T013 [DONE] Re-run scan to confirm clean result
 - After updating allowlist in `.gitleaks.toml`, re-run gitleaks
 - Confirm exit code 0 (no findings)
 - If findings remain, repeat triage (T012) until clean
 
-### T014 [P] Add `gitleaks-report.json` to .gitignore
+### T014 [DONE] [P] Add `gitleaks-report.json` to .gitignore
 **File**: `.gitignore`
 - Append `gitleaks-report.json` to the `.gitignore` file
 - Ensure the report file itself is not committed
 
-### T015 Document audit results
+### T015 [DONE] Document audit results
 - Record in PR description (not committed to repo):
   - Tool and version used
   - Scan date
@@ -123,7 +123,7 @@
 
 ## Phase 5: Final Verification and PR
 
-### T016 Run final verification checklist
+### T016 [DONE] Run final verification checklist
 - Confirm all new files exist at expected paths:
   - `LICENSE`
   - `SECURITY.md`
