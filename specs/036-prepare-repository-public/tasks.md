@@ -134,7 +134,7 @@
 - Confirm `.gitignore` includes `gitleaks-report.json`
 - Review `git diff` for unintended changes
 
-### T017 Create pull request
+### T017 [DONE] Create pull request
 - Stage all changes
 - Commit with descriptive message
 - Push branch to remote
