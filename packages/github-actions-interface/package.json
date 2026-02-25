@@ -9,13 +9,17 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
+    "test": "echo 'No tests yet'",
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@generacy-ai/latency": "^0.1.0"
+    "@generacy-ai/latency": "workspace:^"
   },
   "devDependencies": {
     "@generacy-ai/latency": "workspace:*",

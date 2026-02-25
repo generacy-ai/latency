@@ -47,6 +47,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
@@ -56,6 +59,10 @@
   "dependencies": {
     "zod": "^3.23.8",
     "ulid": "^3.0.2"
+  },
+  "dependencies": {
+    "ulid": "^3.0.2",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "typescript": "^5.4.5",

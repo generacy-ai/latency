@@ -9,6 +9,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
@@ -19,9 +22,9 @@
     "@octokit/rest": "^21.0.0"
   },
   "peerDependencies": {
-    "@generacy-ai/latency": "^0.1.0",
-    "@generacy-ai/latency-plugin-ci-cd": "^0.1.0",
-    "@generacy-ai/github-actions-interface": "^0.1.0"
+    "@generacy-ai/latency": "workspace:^",
+    "@generacy-ai/latency-plugin-ci-cd": "workspace:^",
+    "@generacy-ai/github-actions-interface": "workspace:^"
   },
   "devDependencies": {
     "@generacy-ai/latency": "workspace:*",

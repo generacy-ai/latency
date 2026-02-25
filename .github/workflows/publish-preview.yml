@@ -1,0 +1,60 @@
+name: Publish Preview
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [develop]
+
+jobs:
+  publish-preview:
+    name: Publish Preview Packages
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for changesets
+        id: changesets-check
+        run: |
+          CHANGESET_FILES=$(find .changeset -name '*.md' ! -name 'README.md' 2>/dev/null | head -1)
+          if [ -z "$CHANGESET_FILES" ]; then
+            echo "has_changesets=false" >> "$GITHUB_OUTPUT"
+            echo "No changeset files found, skipping preview publish"
+          else
+            echo "has_changesets=true" >> "$GITHUB_OUTPUT"
+            echo "Changeset files found, proceeding with preview publish"
+          fi
+
+      - name: Setup pnpm
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: pnpm build
+
+      - name: Publish preview packages
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: |
+          pnpm changeset version --snapshot preview
+          pnpm changeset publish --tag preview
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
