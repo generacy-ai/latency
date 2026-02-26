@@ -47,6 +47,50 @@
     "./protocols/version-compatibility": {
       "import": "./dist/protocols/version-compatibility/index.js",
       "types": "./dist/protocols/version-compatibility/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./types/agency-generacy": {
+      "import": "./dist/types/agency-generacy/index.js",
+      "types": "./dist/types/agency-generacy/index.d.ts"
+    },
+    "./types/agency-humancy": {
+      "import": "./dist/types/agency-humancy/index.js",
+      "types": "./dist/types/agency-humancy/index.d.ts"
+    },
+    "./types/attribution-metrics": {
+      "import": "./dist/types/attribution-metrics/index.js",
+      "types": "./dist/types/attribution-metrics/index.d.ts"
+    },
+    "./types/data-export": {
+      "import": "./dist/types/data-export/index.js",
+      "types": "./dist/types/data-export/index.d.ts"
+    },
+    "./types/decision-model": {
+      "import": "./dist/types/decision-model/index.js",
+      "types": "./dist/types/decision-model/index.d.ts"
+    },
+    "./types/extension-comms": {
+      "import": "./dist/types/extension-comms/index.js",
+      "types": "./dist/types/extension-comms/index.d.ts"
+    },
+    "./types/generacy-humancy": {
+      "import": "./dist/types/generacy-humancy/index.js",
+      "types": "./dist/types/generacy-humancy/index.d.ts"
+    },
+    "./types/github-app": {
+      "import": "./dist/types/github-app/index.js",
+      "types": "./dist/types/github-app/index.d.ts"
+    },
+    "./types/knowledge-store": {
+      "import": "./dist/types/knowledge-store/index.js",
+      "types": "./dist/types/knowledge-store/index.d.ts"
+    },
+    "./types/learning-loop": {
+      "import": "./dist/types/learning-loop/index.js",
+      "types": "./dist/types/learning-loop/index.d.ts"
     }
   },
   "files": [
