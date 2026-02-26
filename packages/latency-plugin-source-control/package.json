@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "license": "Apache-2.0",
   "description": "Abstract source control plugin providing common validation and shared logic for all VCS implementations",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/generacy-ai/latency.git",
+    "directory": "packages/latency-plugin-source-control"
+  },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

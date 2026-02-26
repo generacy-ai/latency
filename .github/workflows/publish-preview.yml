@@ -6,6 +6,10 @@ on:
     types: [completed]
     branches: [develop]
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   publish-preview:
     name: Publish Preview Packages
@@ -38,9 +42,13 @@ jobs:
         if: steps.changesets-check.outputs.has_changesets == 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
           registry-url: https://registry.npmjs.org
+
+      - name: Update npm
+        if: steps.changesets-check.outputs.has_changesets == 'true'
+        run: npm install -g npm@latest
 
       - name: Install dependencies
         if: steps.changesets-check.outputs.has_changesets == 'true'
@@ -54,7 +62,7 @@ jobs:
         if: steps.changesets-check.outputs.has_changesets == 'true'
         run: |
           pnpm changeset version --snapshot preview
-          pnpm changeset publish --tag preview
+          pnpm changeset publish --tag preview --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
