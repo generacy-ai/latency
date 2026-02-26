@@ -14,23 +14,23 @@
 
 All changes target `.github/workflows/publish-preview.yml`. These must be applied sequentially to the same file.
 
-### T001 Remove `id-token: write` permission from publish-preview.yml
+### T001 [DONE] Remove `id-token: write` permission from publish-preview.yml
 **File**: `.github/workflows/publish-preview.yml`
 - Remove `id-token: write` from the `permissions` block (line 11)
 - Resulting permissions block should only contain `contents: read`
 
-### T002 Add concurrency group to publish-preview.yml
+### T002 [DONE] Add concurrency group to publish-preview.yml
 **File**: `.github/workflows/publish-preview.yml`
 - Add `concurrency` block after the `permissions` block
 - Use fixed group name `preview-publish` (not branch-scoped, since this only triggers on `develop`)
 - Set `cancel-in-progress: true` to prevent duplicate snapshot publishes
 
-### T003 Remove `npm install -g npm@latest` step from publish-preview.yml
+### T003 [DONE] Remove `npm install -g npm@latest` step from publish-preview.yml
 **File**: `.github/workflows/publish-preview.yml`
 - Remove the entire "Update npm" step (lines 49–51)
 - This was a workaround for a provenance bug; pnpm is the package manager
 
-### T004 Remove `--provenance` flag from publish-preview.yml
+### T004 [DONE] Remove `--provenance` flag from publish-preview.yml
 **File**: `.github/workflows/publish-preview.yml`
 - Change `pnpm changeset publish --tag preview --provenance` to `pnpm changeset publish --tag preview`
 - OIDC/provenance is out of scope per spec
@@ -41,22 +41,22 @@ All changes target `.github/workflows/publish-preview.yml`. These must be applie
 
 All changes target `.github/workflows/release.yml`. These must be applied sequentially to the same file. Phase 2 can run in **parallel** with Phase 1 (different files).
 
-### T005 [P] Remove `id-token: write` permission from release.yml
+### T005 [DONE] [P] Remove `id-token: write` permission from release.yml
 **File**: `.github/workflows/release.yml`
 - Remove `id-token: write` from the `permissions` block (line 14)
 - Resulting permissions block should contain `contents: write` and `pull-requests: write`
 
-### T006 Add `registry-url` to setup-node in release.yml
+### T006 [DONE] Add `registry-url` to setup-node in release.yml
 **File**: `.github/workflows/release.yml`
 - Add `registry-url: https://registry.npmjs.org` to the `actions/setup-node@v4` step
 - This causes `setup-node` to auto-create `.npmrc` with `NODE_AUTH_TOKEN` reference
 
-### T007 Remove `npm install -g npm@latest` step from release.yml
+### T007 [DONE] Remove `npm install -g npm@latest` step from release.yml
 **File**: `.github/workflows/release.yml`
 - Remove the bare `run: npm install -g npm@latest` step (line 34)
 - Same rationale as T003: pnpm is the package manager
 
-### T008 Add `NODE_AUTH_TOKEN` env var to changesets/action step in release.yml
+### T008 [DONE] Add `NODE_AUTH_TOKEN` env var to changesets/action step in release.yml
 **File**: `.github/workflows/release.yml`
 - Add `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}` to the `env` block of the "Create Release PR or Publish" step
 - Keep existing `NPM_TOKEN` for backwards compatibility with changesets action internals
@@ -66,7 +66,7 @@ All changes target `.github/workflows/release.yml`. These must be applied sequen
 
 ## Phase 3: Verify `ci.yml` (no changes expected)
 
-### T009 [P] Verify ci.yml matches spec
+### T009 [DONE] [P] Verify ci.yml matches spec
 **File**: `.github/workflows/ci.yml`
 - Confirm triggers: `pull_request` (all branches) and `push` to `develop`/`main`
 - Confirm concurrency group with `cancel-in-progress: true`
@@ -78,7 +78,7 @@ All changes target `.github/workflows/release.yml`. These must be applied sequen
 
 ## Phase 4: Verify `.changeset/config.json` (no changes expected)
 
-### T010 [P] Verify changeset config matches spec
+### T010 [DONE] [P] Verify changeset config matches spec
 **File**: `.changeset/config.json`
 - Confirm `baseBranch: "develop"`
 - Confirm `access: "public"`
@@ -90,14 +90,14 @@ All changes target `.github/workflows/release.yml`. These must be applied sequen
 
 ## Phase 5: Validation & PR
 
-### T011 Validate workflow YAML syntax
+### T011 [DONE] Validate workflow YAML syntax
 **Files**:
 - `.github/workflows/publish-preview.yml`
 - `.github/workflows/release.yml`
 - Run `yamllint` or equivalent check on modified workflow files
 - Verify no YAML indentation or structural errors were introduced
 
-### T012 Write PR description with branch protection verification checklist
+### T012 [DONE] Write PR description with branch protection verification checklist
 **File**: PR description (not a repo file)
 - Include post-merge verification commands for branch protection rules:
   ```
