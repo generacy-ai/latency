@@ -12,7 +12,7 @@
 
 ## Phase 1: Community Documentation (PR1)
 
-### T001 [US1] Create README.md
+### T001 [DONE] [US1] Create README.md
 **File**: `README.md`
 - Add project header with name ("Latency") and one-line description
 - Add **Packages** section with a table of all 16 `@generacy-ai/*` packages grouped by category:
@@ -26,7 +26,7 @@
 - Add **License** section: Apache-2.0 reference linking to `LICENSE`
 - Add **Security** and **Contributing** links to `SECURITY.md` and `CONTRIBUTING.md`
 
-### T002 [P] [US2] Create CONTRIBUTING.md
+### T002 [DONE] [P] [US2] Create CONTRIBUTING.md
 **File**: `CONTRIBUTING.md`
 - Add welcome/invitation section
 - Add **Getting Started**: clone, `corepack enable`, `pnpm install`, `pnpm build`
@@ -58,13 +58,13 @@
 
 ## Phase 2: Workflow Auth Fix (PR2)
 
-### T005 [US3] Remove `registry-url` from `release.yml`
+### T005 [DONE] [US3] Remove `registry-url` from `release.yml`
 **File**: `.github/workflows/release.yml`
 - Remove `registry-url: https://registry.npmjs.org` from the `Setup Node.js` step (line 33)
 - Keep `node-version: 22` and `cache: pnpm`
 - Rationale: `changesets/action` (line 44) manages its own `.npmrc` via the `NPM_TOKEN` env var; `setup-node`'s `registry-url` creates a conflicting `.npmrc` using `NODE_AUTH_TOKEN` which is not set in this workflow
 
-### T006 [US3] Verify `publish-preview.yml` auth is correct (no changes)
+### T006 [DONE] [US3] Verify `publish-preview.yml` auth is correct (no changes)
 **File**: `.github/workflows/publish-preview.yml`
 - Confirm `registry-url: https://registry.npmjs.org` on line 47 is correct for direct `pnpm changeset publish`
 - Confirm `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}` on line 67 maps the secret correctly
@@ -75,26 +75,26 @@
 
 ## Phase 3: GitHub Repository Settings (Admin Manual)
 
-### T007 [P] [US4] Enable Dependabot security updates
+### T007 [DONE] [P] [US4] Enable Dependabot security updates
 **Action**: Manual — GitHub UI
 - Navigate to **Settings > Code security and analysis**
 - Enable **Dependabot alerts**
 - Enable **Dependabot security updates**
 - No `dependabot.yml` file needed (that controls version updates, which are out of scope)
 
-### T008 [P] [US4] Enable secret scanning and push protection
+### T008 [DONE] [P] [US4] Enable secret scanning and push protection
 **Action**: Manual — GitHub UI
 - Navigate to **Settings > Code security and analysis**
 - Enable **Secret scanning**
 - Enable **Push protection**
 - Note: repo already has `.gitleaks.toml` for local scanning; this adds server-side protection
 
-### T009 [P] [US5] Enable auto-delete head branches
+### T009 [DONE] [P] [US5] Enable auto-delete head branches
 **Action**: Manual — GitHub UI
 - Navigate to **Settings > General > Pull Requests**
 - Check **"Automatically delete head branches"**
 
-### T010 [US4, US5] Verify GitHub settings via API
+### T010 [DONE] [US4, US5] Verify GitHub settings via API
 **Action**: Run verification commands
 - Run `gh api repos/generacy-ai/latency --jq '.delete_branch_on_merge'` — expect `true`
 - Run `gh api repos/generacy-ai/latency --jq '{has_vulnerability_alerts, secret_scanning: .security_and_analysis.secret_scanning.status, push_protection: .security_and_analysis.secret_scanning_push_protection.status}'` — expect all enabled
@@ -104,13 +104,13 @@
 
 ## Phase 4: Verification
 
-### T011 [US1, US2] Review documentation for completeness
+### T011 [DONE] [US1, US2] Review documentation for completeness
 - Verify README.md has all required sections (description, packages, install, dev, license)
 - Verify CONTRIBUTING.md covers workflow, changesets, PR process, coding standards
 - Verify CODE_OF_CONDUCT.md is Contributor Covenant v2.1
 - Verify all inter-document links resolve correctly
 
-### T012 [US3] Verify workflow publishing
+### T012 [DONE] [US3] Verify workflow publishing
 - After PR2 merges to `develop`, confirm `publish-preview.yml` triggers and publishes successfully (if pending changesets exist)
 - After `develop` merges to `main`, confirm `release.yml` triggers and publishes without auth errors
 - Verify no `.npmrc` conflicts in workflow logs
