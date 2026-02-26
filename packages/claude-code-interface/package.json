@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "license": "Apache-2.0",
   "description": "Types and interfaces for Claude Code plugin consumers",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/generacy-ai/latency.git",
+    "directory": "packages/claude-code-interface"
+  },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

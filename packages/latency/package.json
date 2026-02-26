@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "license": "Apache-2.0",
   "description": "Latency monitoring and performance tracking for the Tetrad ecosystem",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/generacy-ai/latency.git",
+    "directory": "packages/latency"
+  },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

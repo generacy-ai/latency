@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "license": "Apache-2.0",
   "description": "Abstract dev agent plugin providing common logic for AI agent implementations",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/generacy-ai/latency.git",
+    "directory": "packages/latency-plugin-dev-agent"
+  },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

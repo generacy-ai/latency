@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "license": "Apache-2.0",
   "description": "Claude Code CLI plugin for the Latency dev agent ecosystem",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/generacy-ai/latency.git",
+    "directory": "packages/latency-plugin-claude-code"
+  },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
