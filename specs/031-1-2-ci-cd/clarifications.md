@@ -1,6 +1,6 @@
 # Clarification Questions
 
-## Status: Pending
+## Status: Resolved
 
 ## Questions
 
@@ -11,7 +11,7 @@
 - A) Remove `--provenance` and `id-token: write`: Matches the spec exactly — pure `NPM_TOKEN` auth with no OIDC. Simplest approach; avoids the OIDC configuration issues seen in prior commits.
 - B) Keep `--provenance` alongside `NPM_TOKEN`: Uses token-based auth for publishing but adds provenance attestation via OIDC as a non-blocking enhancement. Provides supply chain security benefits.
 - C) Defer to what currently works: Remove `--provenance` only if it's causing failures in the current pipeline; otherwise keep it.
-**Answer**:
+**Answer**: A — Remove `--provenance` and `id-token: write`. The spec explicitly lists "npm OIDC trusted publishing" as out of scope. Commit c1b5983 already removed the flag due to issues. Keep it simple: pure `NPM_TOKEN` auth. Provenance can be re-added as a separate enhancement when OIDC is properly configured and tested.
 
 ### Q2: registry-url in setup-node vs .npmrc
 **Context**: The current `publish-preview.yml` still uses `registry-url: https://registry.npmjs.org` in the `setup-node` action, but commit 9a764d9 specifically removed this to avoid `.npmrc` conflicts. The release workflow does NOT use `registry-url`. The spec does not specify how npm authentication should be configured at the workflow level (just says "uses NPM_TOKEN"). There is no `.npmrc` file in the repo.
@@ -20,7 +20,7 @@
 - A) Use `registry-url` in `setup-node`: Let the action auto-generate `.npmrc` with `NODE_AUTH_TOKEN`. Simple but has caused conflicts previously.
 - B) Commit a root `.npmrc` file: Add `//registry.npmjs.org/:_authToken=${NPM_TOKEN}` to the repo. Consistent across all workflows but exposes the auth pattern in source.
 - C) Set `NPM_TOKEN` as env variable only: Rely on changesets/action and pnpm's default behavior to pick up `NPM_TOKEN` from the environment. Matches how `release.yml` currently works.
-**Answer**:
+**Answer**: A — Use `registry-url` in `setup-node`. This is the standard GitHub Actions approach — well-documented, auto-creates `.npmrc` with proper `NODE_AUTH_TOKEN` reference. The previous conflicts (commit 9a764d9) were likely tied to the provenance/OIDC issue, not `registry-url` itself. With provenance removed (Q1), this should work cleanly. Both preview and release workflows should use it consistently. This also aligns with the latency#32 Q6 answer to standardize on `NODE_AUTH_TOKEN`.
 
 ### Q3: npm Global Update Step
 **Context**: Both `publish-preview.yml` and `release.yml` include a step `npm install -g npm@latest` before installing dependencies. The spec does not mention this step. It's unclear why a global npm update is needed when pnpm is the package manager — this may have been a workaround for an npm provenance/publishing bug.
@@ -29,7 +29,7 @@
 - A) Remove it: pnpm is the package manager; a global npm update is unnecessary and adds ~10s to each workflow run.
 - B) Keep it: There may be an underlying reason (e.g., `pnpm changeset publish` shells out to npm internally, and an older npm version has bugs).
 - C) Investigate and document: Determine if there's a concrete reason before deciding, and document the finding in the spec.
-**Answer**:
+**Answer**: A — Remove it. pnpm is the package manager. There's no documented reason for upgrading global npm, and this was likely a workaround for the provenance bug that's now being removed (Q1). Adds ~10s per workflow run for no clear benefit. If a concrete need arises later, it can be re-added with a comment explaining why.
 
 ### Q4: Spec Says "New Implementation" but Workflows Already Exist
 **Context**: The spec reads as though these workflows need to be created from scratch (Phase 2, blocked by generacy#242). However, all three workflow files (`ci.yml`, `publish-preview.yml`, `release.yml`) and the `.changeset/config.json` already exist and appear functional. The spec's acceptance criteria closely match the existing implementation.
@@ -38,7 +38,7 @@
 - A) Document and validate: The workflows already exist; this spec formalizes them. Implementation is verification + minor fixes only.
 - B) Rewrite with improvements: Use the spec as the source of truth and rewrite workflows to match exactly, resolving discrepancies (provenance, registry-url, npm update).
 - C) Targeted fixes: Keep existing workflows but fix the specific discrepancies identified between spec and implementation.
-**Answer**:
+**Answer**: C — Targeted fixes. The workflows already exist and are broadly functional. The spec formalizes what should be there. The right approach is to fix the specific discrepancies identified by these clarification questions (provenance, registry-url, npm update, concurrency group, etc.) rather than rewriting from scratch or just rubber-stamping. This avoids unnecessary churn while ensuring spec alignment.
 
 ### Q5: Preview Publish Failure Handling
 **Context**: The spec does not describe what should happen if a preview snapshot publish partially fails (e.g., 10 of 16 packages publish but 6 fail due to a transient npm registry error). Since preview publishes modify package versions in-place via `changeset version --snapshot`, a partial failure leaves the workspace in a dirty state.
@@ -47,7 +47,7 @@
 - A) Fail fast, investigate manually: Preview is best-effort; if it fails, developers can re-trigger by pushing to develop. No special retry logic needed.
 - B) Add retry logic: Wrap the publish step in a retry (e.g., 3 attempts with backoff) to handle transient npm registry errors.
 - C) Publish packages individually: Instead of `pnpm changeset publish` (all-or-nothing), publish each package separately so partial success is preserved.
-**Answer**:
+**Answer**: A — Fail fast, investigate manually. Preview publishes are best-effort and triggered by every merge to develop. If one fails, the next merge re-triggers it. Retry logic and individual package publishing add complexity that isn't justified for the preview stream. Transient npm failures are rare enough not to warrant engineering around.
 
 ### Q6: CI Workflow Trigger Scope for Pull Requests
 **Context**: The spec says CI triggers "on all pull requests (to any branch)" and the current `ci.yml` uses `pull_request:` with no branch filter, which matches. However, this means PRs targeting feature branches (not just develop/main) also trigger CI. In a monorepo with active development, this could consume significant GitHub Actions minutes.
@@ -55,7 +55,7 @@
 **Options**:
 - A) All branches (current): Maximum safety — every PR gets CI regardless of target. Matches the spec as written.
 - B) Only `develop` and `main`: Reduces Actions minutes usage. PRs to feature branches skip CI, which is acceptable if those branches eventually merge to develop.
-**Answer**:
+**Answer**: A — All branches (current). The buildout plan section 1.2 explicitly says "lint, test, build on PR (to any branch)". The Actions minutes overhead is minimal for a repo of this size (~30 commits). Every PR deserves CI validation regardless of target branch — a bug caught on a feature-to-feature PR is a bug caught early.
 
 ### Q7: Stable Release npm Authentication Mechanism
 **Context**: In the current `release.yml`, the `NPM_TOKEN` is passed as an environment variable to the `changesets/action@v1` step. However, the changesets action documentation typically expects `NPM_TOKEN` to be available for `npm publish` internally. The release workflow does NOT use `registry-url` in `setup-node` and has no `.npmrc` — it's unclear how npm knows to use the token for authentication during `pnpm changeset publish`.
@@ -64,7 +64,7 @@
 - A) Verified working: The changesets/action handles `NPM_TOKEN` automatically; no changes needed.
 - B) Add `.npmrc` creation step: Explicitly create `.npmrc` with the auth token before publishing, to be safe.
 - C) Align with preview workflow: Use the same auth mechanism in both preview and release workflows for consistency.
-**Answer**:
+**Answer**: C — Align with preview workflow. Use the same `registry-url` in `setup-node` for both preview and release workflows (per Q2 answer). The current release workflow has no explicit auth mechanism beyond passing `NPM_TOKEN` to the `changesets/action` env — making auth explicit via `registry-url` ensures the pipeline works reliably rather than depending on implicit behavior. Consistency between the two publishing workflows reduces debugging surface.
 
 ### Q8: Test Coverage for Packages with No Tests
 **Context**: Several packages have `"test": "echo 'No tests yet'"` as their test script. The CI pipeline runs `pnpm test` across all packages, which will succeed even for untested packages (since `echo` exits 0). The spec's success criteria (SC-001) says "CI passes on all PRs that have no lint/test/build errors" but doesn't address minimum test coverage.
@@ -73,7 +73,7 @@
 - A) Accept zero tests for now: The CI pipeline validates what exists; test coverage is a separate concern tracked outside this spec.
 - B) Require at least one test per package: Add a check that ensures no package uses the `echo 'No tests yet'` placeholder.
 - C) Add coverage reporting (no threshold): Add vitest coverage output to CI for visibility, but don't enforce a minimum threshold yet.
-**Answer**:
+**Answer**: A — Accept zero tests for now. The CI pipeline validates what exists. Test coverage is a separate concern, not part of a CI/CD setup spec. Packages with `echo 'No tests yet'` make the gap visible. Coverage reporting or thresholds can be added in a dedicated issue.
 
 ### Q9: Concurrency Group for Preview Publish
 **Context**: The CI workflow has a concurrency group (`ci-${{ github.ref }}`) that cancels in-progress runs on new pushes. The release workflow has a concurrency group with `cancel-in-progress: false`. However, the preview publish workflow has NO concurrency group at all. If two merges to `develop` happen in quick succession, two preview publish workflows could run simultaneously, potentially causing version conflicts or duplicate publishes.
@@ -82,7 +82,7 @@
 - A) Add concurrency with cancel-in-progress: true: The latest merge wins; older preview publishes are cancelled since they'd be stale anyway.
 - B) Add concurrency with cancel-in-progress: false: Queue preview publishes to avoid conflicts, but never cancel a running publish.
 - C) No concurrency group needed: Preview publishes from `workflow_run` events are naturally serialized by GitHub Actions, or the risk of conflict is low enough to ignore.
-**Answer**:
+**Answer**: A — Add concurrency with `cancel-in-progress: true`. Two simultaneous preview publishes can cause version conflicts or duplicate publishes — this is a real failure mode. The latest merge to develop is the one that matters; older preview publishes are stale by definition. A one-liner concurrency group prevents this.
 
 ### Q10: Changesets Action Version Pinning
 **Context**: The spec and current workflow reference `changesets/action@v1`, which is a major version tag that auto-updates to the latest v1.x release. A breaking change in a minor/patch release could silently break the release pipeline. The spec does not specify whether to pin to an exact version or use the major version tag.
@@ -91,7 +91,7 @@
 - A) Use `@v1` major tag (current): Automatically gets bug fixes and improvements. Acceptable risk for a well-maintained action.
 - B) Pin to exact SHA: Maximum reproducibility (e.g., `changesets/action@abc123`). Requires manual updates to get improvements.
 - C) Pin to minor version: Use `@v1.x.y` for a middle ground between stability and auto-updates.
-**Answer**:
+**Answer**: A — Use `@v1` major tag (current). This follows standard GitHub Actions conventions. `changesets/action` is widely used and well-maintained. SHA pinning adds maintenance burden (manual bumps for every patch) for minimal risk reduction. If a breaking change occurs in the future, we can pin then.
 
 ### Q11: lint Script is Actually typecheck
 **Context**: The spec lists `pnpm lint` as a CI step (FR-001, US1), and the root `package.json` has a `lint` script. However, `lint` in every package is defined as `tsc --noEmit`, which is identical to the `typecheck` script. There is no ESLint, Prettier, or other code quality linting configured. The CI pipeline effectively runs typecheck twice (once in `build` which runs `tsc`, and once in `lint` which runs `tsc --noEmit`).
@@ -100,7 +100,7 @@
 - A) Acknowledge and keep as-is: Document that `lint` = `typecheck` currently. Adding a real linter is a separate task/spec.
 - B) Add ESLint/Biome setup to this spec: Expand the scope to include proper linting configuration as part of the CI/CD pipeline work.
 - C) Remove the `lint` step from CI: Since it duplicates `typecheck` (which `build` already validates), remove the redundant step to save CI time.
-**Answer**:
+**Answer**: A — Acknowledge and keep as-is. The `lint` script is a slot that will eventually hold a real linter (ESLint/Biome). Keeping it in CI means the workflow won't need to change when that swap happens. Adding a real linter is scope creep for a CI/CD issue — it should be tracked separately. The ~30s overhead of running `tsc --noEmit` twice is negligible.
 
 ### Q12: Branch Protection Rules Enforcement
 **Context**: US1 acceptance criteria states "PR merge is blocked if any step fails (via branch protection rules)" and the Out of Scope section says "Branch protection rule configuration is managed separately." This creates an implicit dependency — the CI pipeline alone doesn't enforce merge blocking; branch protection rules must also be configured.
@@ -108,4 +108,4 @@
 **Options**:
 - A) Assumptions note is sufficient: Branch protection is a separate concern. The spec just needs CI to report status checks correctly.
 - B) Add a verification checklist item: Include a post-implementation step to verify that branch protection rules reference the CI workflow's status check.
-**Answer**:
+**Answer**: B — Add a verification checklist item. The spec correctly says branch protection is managed separately, but without a verification step the CI pipeline provides no merge-blocking value. Include exact `gh api` commands in the PR description as a post-merge checklist item. Configuration requires CI workflows to exist on `main` first, so it's inherently a post-merge step.
