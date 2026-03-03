@@ -1,6 +1,6 @@
 {
   "name": "@generacy-ai/latency",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "Apache-2.0",
   "description": "Latency monitoring and performance tracking for the Tetrad ecosystem",
   "repository": {
@@ -104,10 +104,6 @@
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit",
     "test": "vitest run"
-  },
-  "dependencies": {
-    "zod": "^3.23.8",
-    "ulid": "^3.0.2"
   },
   "dependencies": {
     "ulid": "^3.0.2",

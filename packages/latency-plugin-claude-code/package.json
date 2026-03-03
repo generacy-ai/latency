@@ -1,6 +1,6 @@
 {
   "name": "@generacy-ai/latency-plugin-claude-code",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "Apache-2.0",
   "description": "Claude Code CLI plugin for the Latency dev agent ecosystem",
   "repository": {

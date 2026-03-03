@@ -1,6 +1,6 @@
 {
   "name": "@generacy-ai/latency-plugin-source-control",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "Apache-2.0",
   "description": "Abstract source control plugin providing common validation and shared logic for all VCS implementations",
   "repository": {
