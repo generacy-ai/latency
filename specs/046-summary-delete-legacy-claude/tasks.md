@@ -10,17 +10,17 @@
 
 ## Phase 1: Verification
 
-- [ ] T001 [US1] Verify no runtime or build references to `.claude/autodev.json` — grep codebase for `autodev.json` references (excluding specs/ directory)
-- [ ] T002 [P] [US1] Verify `.claude/autodev.json` exists and inspect contents to confirm it only has default config
+- [X] T001 [US1] Verify no runtime or build references to `.claude/autodev.json` — grep codebase for `autodev.json` references (excluding specs/ directory)
+- [X] T002 [P] [US1] Verify `.claude/autodev.json` exists and inspect contents to confirm it only has default config
 
 ## Phase 2: Deletion
 
-- [ ] T003 [US1] Delete `.claude/autodev.json` using `git rm .claude/autodev.json`
+- [X] T003 [US1] Delete `.claude/autodev.json` using `git rm .claude/autodev.json`
 
 ## Phase 3: Validation
 
-- [ ] T004 [US1] Run `pnpm build` to confirm build still passes after deletion
-- [ ] T005 [P] [US1] Run `pnpm test` (if tests exist) to confirm no test failures
+- [X] T004 [US1] Run `pnpm build` to confirm build still passes after deletion
+- [X] T005 [P] [US1] Run `pnpm test` (if tests exist) to confirm no test failures
 
 ## Dependencies & Execution Order
 
