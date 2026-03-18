@@ -10,13 +10,13 @@
 
 ## Phase 1: Implementation
 
-- [ ] T001 [P] [US1][US2] Replace verification phase in `.generacy/speckit-feature.yaml` — Remove the two `verification.check` steps (`run-tests`, `run-lint`) in Phase 7 and replace with a single `build.validate` step preserving `continueOnError: true`
-- [ ] T002 [P] [US1][US2] Replace verification phase in `.generacy/speckit-bugfix.yaml` — Remove the two `verification.check` steps (`run-tests`, `run-lint`) in Phase 6 and replace with a single `build.validate` step preserving `continueOnError: true`
+- [X] T001 [P] [US1][US2] Replace verification phase in `.generacy/speckit-feature.yaml` — Remove the two `verification.check` steps (`run-tests`, `run-lint`) in Phase 7 and replace with a single `build.validate` step preserving `continueOnError: true`
+- [X] T002 [P] [US1][US2] Replace verification phase in `.generacy/speckit-bugfix.yaml` — Remove the two `verification.check` steps (`run-tests`, `run-lint`) in Phase 6 and replace with a single `build.validate` step preserving `continueOnError: true`
 
 ## Phase 2: Verification
 
-- [ ] T003 Verify no hardcoded `pnpm` references remain in verification phases of either workflow file
-- [ ] T004 Verify both files use `build.validate` in their verification phase
+- [X] T003 Verify no hardcoded `pnpm` references remain in verification phases of either workflow file
+- [X] T004 Verify both files use `build.validate` in their verification phase
 
 ## Dependencies & Execution Order
 

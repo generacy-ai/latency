@@ -153,14 +153,6 @@ phases:
   # Phase 6: Verification
   - name: verification
     steps:
-      - name: run-tests
-        uses: verification.check
-        with:
-          command: pnpm run test
-        continueOnError: true
-
-      - name: run-lint
-        uses: verification.check
-        with:
-          command: pnpm run lint
+      - name: validate
+        uses: build.validate
         continueOnError: true
