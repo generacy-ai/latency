@@ -51,4 +51,5 @@ export {
   type GeneracyTier,
   parseGeneracySubscriptionTier,
   safeParseGeneracySubscriptionTier,
+  GENERACY_TIER_DEFAULTS,
 } from './generacy-tier.js';

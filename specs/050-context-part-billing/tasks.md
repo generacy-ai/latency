@@ -10,30 +10,30 @@
 
 ## Phase 1: Schema Changes
 
-- [ ] T001 [US1] Add `free` to `GeneracyTierSchema` enum in `packages/latency/src/api/subscription/generacy-tier.ts` — update `z.enum(['starter', 'team', 'enterprise'])` to `z.enum(['free', 'starter', 'team', 'enterprise'])`
-- [ ] T002 [US1] Add `clusterLimit` optional field to `GeneracySubscriptionTier.V1` in `generacy-tier.ts` — `z.number().int().nonnegative().nullable().optional()`
-- [ ] T003 [US1] Add `maxConcurrentExecutions` optional field to `GeneracySubscriptionTier.V1` in `generacy-tier.ts` — `z.number().int().positive().nullable().optional()`
-- [ ] T004 [US1] Add `GENERACY_TIER_DEFAULTS` constant in `generacy-tier.ts` — typed as `Record<GeneracyTier, { clusterLimit: number | null; maxConcurrentExecutions: number | null }>` with `as const satisfies`
+- [X] T001 [US1] Add `free` to `GeneracyTierSchema` enum in `packages/latency/src/api/subscription/generacy-tier.ts` — update `z.enum(['starter', 'team', 'enterprise'])` to `z.enum(['free', 'starter', 'team', 'enterprise'])`
+- [X] T002 [US1] Add `clusterLimit` optional field to `GeneracySubscriptionTier.V1` in `generacy-tier.ts` — `z.number().int().nonnegative().nullable().optional()`
+- [X] T003 [US1] Add `maxConcurrentExecutions` optional field to `GeneracySubscriptionTier.V1` in `generacy-tier.ts` — `z.number().int().positive().nullable().optional()`
+- [X] T004 [US1] Add `GENERACY_TIER_DEFAULTS` constant in `generacy-tier.ts` — typed as `Record<GeneracyTier, { clusterLimit: number | null; maxConcurrentExecutions: number | null }>` with `as const satisfies`
 
 ## Phase 2: Schema Unification
 
-- [ ] T005 [US1] Unify `OrganizationSubscriptionTierSchema` in `packages/latency/src/api/organization/organization.ts` — import `GeneracyTierSchema` from `../subscription/generacy-tier.js` and replace independent enum definition with `export const OrganizationSubscriptionTierSchema = GeneracyTierSchema`
-- [ ] T006 [US1] Verify `OrganizationSubscriptionTier` type alias still works after unification — ensure backward compatibility of the type export
+- [X] T005 [US1] Unify `OrganizationSubscriptionTierSchema` in `packages/latency/src/api/organization/organization.ts` — import `GeneracyTierSchema` from `../subscription/generacy-tier.js` and replace independent enum definition with `export const OrganizationSubscriptionTierSchema = GeneracyTierSchema`
+- [X] T006 [US1] Verify `OrganizationSubscriptionTier` type alias still works after unification — ensure backward compatibility of the type export
 
 ## Phase 3: Tests
 
-- [ ] T007 [P] [US1] Update `generacy-tier.test.ts` — add `'free'` to valid tier assertions, remove `'free'` from invalid tier test
-- [ ] T008 [P] [US1] Add tests for `clusterLimit` field in `generacy-tier.test.ts` — valid integer, null (unlimited), omitted (backward compat), reject negative, reject non-integer
-- [ ] T009 [P] [US1] Add tests for `maxConcurrentExecutions` field in `generacy-tier.test.ts` — valid positive integer, null (unlimited), omitted (backward compat), reject zero, reject negative
-- [ ] T010 [P] [US1] Add tests for `GENERACY_TIER_DEFAULTS` in `generacy-tier.test.ts` — verify shape has all four tiers, verify values match tier table
-- [ ] T011 [P] [US1] Add free tier subscription acceptance test in `generacy-tier.test.ts` — full subscription object with `tier: 'free'`
-- [ ] T012 [P] [US1] Update `organization.test.ts` in `packages/latency/src/api/organization/__tests__/` — add `'free'` to valid `OrganizationSubscriptionTierSchema` assertions
+- [X] T007 [P] [US1] Update `generacy-tier.test.ts` — add `'free'` to valid tier assertions, remove `'free'` from invalid tier test
+- [X] T008 [P] [US1] Add tests for `clusterLimit` field in `generacy-tier.test.ts` — valid integer, null (unlimited), omitted (backward compat), reject negative, reject non-integer
+- [X] T009 [P] [US1] Add tests for `maxConcurrentExecutions` field in `generacy-tier.test.ts` — valid positive integer, null (unlimited), omitted (backward compat), reject zero, reject negative
+- [X] T010 [P] [US1] Add tests for `GENERACY_TIER_DEFAULTS` in `generacy-tier.test.ts` — verify shape has all four tiers, verify values match tier table
+- [X] T011 [P] [US1] Add free tier subscription acceptance test in `generacy-tier.test.ts` — full subscription object with `tier: 'free'`
+- [X] T012 [P] [US1] Update `organization.test.ts` in `packages/latency/src/api/organization/__tests__/` — add `'free'` to valid `OrganizationSubscriptionTierSchema` assertions
 
 ## Phase 4: Verification
 
-- [ ] T013 Run `pnpm build` and verify no compilation errors
-- [ ] T014 Run `pnpm test` and verify all existing + new tests pass
-- [ ] T015 Grep codebase for any other references to `OrganizationSubscriptionTierSchema` enum values to confirm no breakage
+- [X] T013 Run `pnpm build` and verify no compilation errors
+- [X] T014 Run `pnpm test` and verify all existing + new tests pass
+- [X] T015 Grep codebase for any other references to `OrganizationSubscriptionTierSchema` enum values to confirm no breakage
 
 ## Dependencies & Execution Order
 
