@@ -10,7 +10,7 @@
 - B: `src/types/` — new subdirectory alongside existing domain type schemas
 - C: Other location
 
-**Answer**: *Pending*
+**Answer**: C — Add `id` only, not `createdAt`/`updatedAt`. The `id` field makes the type self-describing (consistent with other API schemas). But `createdAt`/`updatedAt` are redundant — `grantedAt`/`connectedAt` serve as creation timestamps, and `lastHeartbeat`/`lastSeen` serve as update timestamps. Adding both pairs would be confusing.
 
 ### Q2: Status Transition Validation
 **Context**: US2 acceptance criteria states "ExecutionLease schema validates status transitions (active → releasing)". However, Zod schemas validate individual objects at rest — they cannot validate transitions between states because they don't have access to the previous state. The schema can validate the enum values (`'active' | 'releasing'`), but transition logic (e.g., preventing `releasing → active`) requires a stateful helper.
@@ -20,7 +20,7 @@
 - B: Enum + transition helper — define valid transitions as a map and export a `validateTransition(from, to)` helper alongside the schema
 - C: Other approach
 
-**Answer**: *Pending*
+**Answer**: C — Mixed. `LeaseId` and `ClusterId` are internally generated and should use ULID format. `QueueItemId`, `JobId`, and `ProjectId` may originate from Firestore or external systems, so plain branded strings are safer for those.
 
 ### Q3: ClusterRegistration Identity Field
 **Context**: The `ExecutionLease` type includes a `clusterId` field that presumably references a cluster, but the `ClusterRegistration` type only has `projectId` — there's no `clusterId` field on the registration itself. If these are Firestore documents, the cluster identity might be the document key, but the schema wouldn't capture that.
@@ -30,4 +30,4 @@
 - B: No `clusterId` — cluster identity is the Firestore document key, not part of the schema
 - C: Other approach
 
-**Answer**: *Pending*
+**Answer**: B — Add `./api` export path covering all API schemas. Clean import path, forward-compatible if more API types are added. Per-subdirectory paths are overkill for now, and the root export could get bloated.
