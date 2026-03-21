@@ -9,7 +9,7 @@
 - A: FeatureEntitlement entry (reuses existing pattern, no schema shape change)
 - B: New top-level optional field on `GeneracySubscriptionTier.V1` (explicit, type-safe)
 
-**Answer**: *Pending*
+**Answer**: B — Top-level field on `GeneracySubscriptionTier.V1`. Cluster limits and concurrent execution limits are core tier constraints, not optional features. Top-level fields give type safety — enforcement code accesses `tier.clusterLimit` directly instead of searching a FeatureEntitlement array. Feature entitlements are better suited for optional/toggleable features.
 
 ### Q2: Cloud UI Access Representation
 **Context**: The tier table specifies Cloud UI as Yes/No per tier, but the spec doesn't define how this maps to the schema. It could be a FeatureEntitlement with `{ feature: 'cloud_ui', enabled: false }` for the free tier, or it could be left as an implicit property of the tier (not explicitly stored in the subscription).
@@ -18,7 +18,7 @@
 - A: Explicit FeatureEntitlement entry (`cloud_ui`)
 - B: Implicit — derived from tier at runtime (no schema change needed)
 
-**Answer**: *Pending*
+**Answer**: B — Implicit, derived from tier at runtime. Cloud UI access is strictly binary (free = no, paid = yes), so `tier !== 'free'` is sufficient. No schema change needed. If feature gating becomes more granular later, we can add explicit entitlements then.
 
 ### Q3: Organization Schema Alignment
 **Context**: `OrganizationSubscriptionTierSchema` in `organization.ts` independently enumerates tiers as `['starter', 'team', 'enterprise']`. If `free` is added to `GeneracyTierSchema` but not to `OrganizationSubscriptionTierSchema`, an organization on the free tier would fail validation.
@@ -28,7 +28,7 @@
 - B: Add `free` to both and refactor to share a single `GeneracyTierSchema`
 - C: Only update `GeneracyTierSchema`; organization schema is updated in a separate task
 
-**Answer**: *Pending*
+**Answer**: B — Add `free` to both and refactor to share a single `GeneracyTierSchema`. Two independent enum definitions that must stay in sync is a bug waiting to happen.
 
 ### Q4: Default Behavior for Missing clusterLimit
 **Context**: FR-005 requires backward compatibility — existing subscriptions without `clusterLimit` must parse without error. When enforcement code encounters a subscription missing `clusterLimit`, it needs to know whether to treat the absence as "unlimited" (permissive) or "0" (deny all clusters).
@@ -38,7 +38,7 @@
 - B: Default to 0 (restrictive — forces explicit assignment)
 - C: Default to the tier's standard limit (look up from tier definitions)
 
-**Answer**: *Pending*
+**Answer**: C — Default to the tier's standard limit. If an existing Starter subscription doesn't have `clusterLimit`, it should get Starter's default (1), not unlimited. Safest approach — existing subscriptions behave as expected without being overly permissive or breaking.
 
 ### Q5: Concurrent Execution Schema Representation
 **Context**: The tier table defines concurrent execution limits (1/3/10/unlimited), and the spec says enforcement is out of scope (separate phase). However, the schema definitions being created here could include the execution limit values so they're available when enforcement is built later.
@@ -47,4 +47,4 @@
 - A: Yes — define them now as FeatureEntitlement entries so enforcement can read them later
 - B: No — only add `clusterLimit` now; concurrent execution limits are added when enforcement is built
 
-**Answer**: *Pending*
+**Answer**: A — Define concurrent execution limits now. We're already touching these schemas to add `clusterLimit`. Adding `maxConcurrentExecutions` alongside it is minimal extra work and means Phase 2/3 can read the values without needing another schema migration.
