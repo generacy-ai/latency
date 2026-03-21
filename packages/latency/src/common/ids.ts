@@ -13,6 +13,11 @@ export type MembershipId = string & { readonly __brand: 'MembershipId' };
 export type InviteId = string & { readonly __brand: 'InviteId' };
 export type WorkItemId = string & { readonly __brand: 'WorkItemId' };
 export type AgentId = string & { readonly __brand: 'AgentId' };
+export type LeaseId = string & { readonly __brand: 'LeaseId' };
+export type ClusterId = string & { readonly __brand: 'ClusterId' };
+export type QueueItemId = string & { readonly __brand: 'QueueItemId' };
+export type JobId = string & { readonly __brand: 'JobId' };
+export type ProjectId = string & { readonly __brand: 'ProjectId' };
 
 // Zod schemas with ULID validation
 export const CorrelationIdSchema = z
@@ -55,6 +60,31 @@ export const AgentIdSchema = z
   .regex(ULID_REGEX, 'Invalid ULID format for AgentId')
   .transform((val) => val as AgentId);
 
+export const LeaseIdSchema = z
+  .string()
+  .regex(ULID_REGEX, 'Invalid ULID format for LeaseId')
+  .transform((val) => val as LeaseId);
+
+export const ClusterIdSchema = z
+  .string()
+  .regex(ULID_REGEX, 'Invalid ULID format for ClusterId')
+  .transform((val) => val as ClusterId);
+
+export const QueueItemIdSchema = z
+  .string()
+  .min(1, 'QueueItemId must not be empty')
+  .transform((val) => val as QueueItemId);
+
+export const JobIdSchema = z
+  .string()
+  .min(1, 'JobId must not be empty')
+  .transform((val) => val as JobId);
+
+export const ProjectIdSchema = z
+  .string()
+  .min(1, 'ProjectId must not be empty')
+  .transform((val) => val as ProjectId);
+
 // ID generation utilities
 export function generateCorrelationId(): CorrelationId {
   return ulid() as CorrelationId;
@@ -86,4 +116,12 @@ export function generateWorkItemId(): WorkItemId {
 
 export function generateAgentId(): AgentId {
   return ulid() as AgentId;
+}
+
+export function generateLeaseId(): LeaseId {
+  return ulid() as LeaseId;
+}
+
+export function generateClusterId(): ClusterId {
+  return ulid() as ClusterId;
 }
