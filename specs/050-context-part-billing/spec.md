@@ -1,51 +1,26 @@
-# Feature Specification: Add Free Tier to Generacy Subscription Definitions
+# Feature Specification: ## Context
 
-**Branch**: `050-context-part-billing` | **Date**: 2026-03-20 | **Status**: Draft
+Part of the [Billing & Concurrent Workflow Enforcement](https://github
+
+**Branch**: `050-context-part-billing` | **Date**: 2026-03-21 | **Status**: Draft
 
 ## Summary
 
-Add a `free` tier to the Generacy subscription tier definitions and introduce a `clusterLimit` field to tier entitlements. This is part of **Phase 1: Foundation** of the [Billing & Concurrent Workflow Enforcement](https://github.com/generacy-ai/tetrad-development/blob/develop/docs/billing-concurrent-workflow-enforcement.md) plan.
-
 ## Context
 
-The current `GeneracyTier` type in `packages/latency/src/api/subscription/generacy-tier.ts` defines three tiers: `starter`, `team`, and `enterprise`. To support a freemium onboarding model and enforce concurrent workflow limits, a `free` tier must be added with restricted entitlements. Additionally, `clusterLimit` is a new entitlement dimension that must be tracked across all tiers.
+Part of the [Billing & Concurrent Workflow Enforcement](https://github.com/generacy-ai/tetrad-development/blob/develop/docs/billing-concurrent-workflow-enforcement.md) plan — **Phase 1: Foundation**.
 
-## User Stories
+## Task
 
-### US1: Free Tier Access
+Add a `free` tier to the Generacy subscription tier definitions in the shared latency schemas.
 
-**As a** new Generacy user,
-**I want** to start using the platform on a free tier,
-**So that** I can evaluate the product with limited capabilities before committing to a paid plan.
+### Changes
 
-**Acceptance Criteria**:
-- [ ] Free tier allows 1 concurrent execution
-- [ ] Free tier allows 1 connected cluster
-- [ ] Free tier does not include cloud UI access
+- Add `free` to the `GeneracyTier` type (`src/api/subscription/generacy-tier.ts`)
+- Define free tier properties: 1 concurrent execution, 1 connected cluster, no cloud UI
+- Add `clusterLimit` field to tier entitlements alongside existing fields
 
-### US2: Cluster Limit Enforcement
-
-**As a** platform operator,
-**I want** cluster limits defined per subscription tier,
-**So that** the system can enforce how many clusters each organization may connect based on their plan.
-
-**Acceptance Criteria**:
-- [ ] Each tier defines a `clusterLimit` value
-- [ ] Enterprise tier has unlimited clusters (null limit)
-- [ ] Starter tier is limited to 1 cluster
-- [ ] Team tier is limited to 3 clusters
-
-## Functional Requirements
-
-| ID | Requirement | Priority | Notes |
-|----|-------------|----------|-------|
-| FR-001 | Add `free` to the `GeneracyTier` Zod enum in `generacy-tier.ts` | P1 | Currently: `starter`, `team`, `enterprise` |
-| FR-002 | Define free tier subscription defaults (1 seat, restricted entitlements) | P1 | Must integrate with existing `GeneracySubscriptionV1` schema |
-| FR-003 | Add `clusterLimit` field to `FeatureEntitlementV1` or as a top-level tier property | P1 | Follows same pattern as existing `limit` field |
-| FR-004 | Update all existing tier definitions with `clusterLimit` values | P1 | See tier table below |
-| FR-005 | Ensure backward compatibility — existing subscriptions without `clusterLimit` parse without error | P2 | Field should be optional with sensible default |
-
-## Tier Definitions
+### Tier Definitions
 
 | Tier | Concurrent Executions | Connected Clusters | Cloud UI |
 |------|----------------------|-------------------|----------|
@@ -54,27 +29,44 @@ The current `GeneracyTier` type in `packages/latency/src/api/subscription/genera
 | Team | 10 | 3 | Yes |
 | Enterprise | Unlimited | Unlimited | Yes |
 
+### Acceptance Criteria
+
+- [ ] Free tier is defined in Generacy tier schemas
+- [ ] `clusterLimit` field added to tier entitlements
+- [ ] Existing tier definitions updated with cluster limits
+- [ ] All existing tests pass
+
+## User Stories
+
+### US1: [Primary User Story]
+
+**As a** [user type],
+**I want** [capability],
+**So that** [benefit].
+
+**Acceptance Criteria**:
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]
+
+## Functional Requirements
+
+| ID | Requirement | Priority | Notes |
+|----|-------------|----------|-------|
+| FR-001 | [Description] | P1 | |
+
 ## Success Criteria
 
 | ID | Metric | Target | Measurement |
 |----|--------|--------|-------------|
-| SC-001 | Free tier accepted by schema validation | Pass | Unit tests with valid free tier subscriptions |
-| SC-002 | Existing tier data parses without regression | Pass | All existing tests continue to pass |
-| SC-003 | `clusterLimit` enforced per tier | Correct values | Unit tests verify limit values per tier |
+| SC-001 | [Metric] | [Target] | [How to measure] |
 
 ## Assumptions
 
-- The `free` tier follows the same `GeneracySubscriptionV1` schema structure as other tiers (ULID IDs, org-scoped, seat-based)
-- Free tier subscriptions will have `seatCount: 1`
-- `clusterLimit` can be represented using the existing `FeatureEntitlementV1` pattern (feature string + optional integer limit) or as a new field on the subscription schema
-- Concurrent execution limits are enforced at a different layer (not in scope here — only the schema definition)
+- [Assumption 1]
 
 ## Out of Scope
 
-- Runtime enforcement of concurrent execution limits (separate phase)
-- Billing/payment integration for tier upgrades
-- UI changes for tier selection or display
-- Migration of existing subscriptions to include `clusterLimit`
+- [Exclusion 1]
 
 ---
 
