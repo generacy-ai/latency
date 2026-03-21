@@ -29,11 +29,12 @@ export function generateGeneracySubscriptionId(): GeneracySubscriptionId {
 
 /**
  * Organization subscription tiers for Generacy platform.
+ * Free: Limited access, single cluster, single execution
  * Starter: Small teams, basic features
  * Team: Growing teams, advanced collaboration
  * Enterprise: Large organizations, full features, SLA
  */
-export const GeneracyTierSchema = z.enum(['starter', 'team', 'enterprise']);
+export const GeneracyTierSchema = z.enum(['free', 'starter', 'team', 'enterprise']);
 export type GeneracyTier = z.infer<typeof GeneracyTierSchema>;
 
 /**
@@ -104,6 +105,12 @@ export namespace GeneracySubscriptionTier {
     /** ISO 8601 timestamp when trial ends (if trialing) */
     trialEnd: ISOTimestampSchema.optional(),
 
+    /** Maximum number of connected clusters. null = unlimited, undefined = use tier default */
+    clusterLimit: z.number().int().nonnegative().nullable().optional(),
+
+    /** Maximum concurrent executions. null = unlimited, undefined = use tier default */
+    maxConcurrentExecutions: z.number().int().positive().nullable().optional(),
+
     /** ISO 8601 timestamp when subscription was canceled (if canceled) */
     canceledAt: ISOTimestampSchema.optional(),
   }).refine(
@@ -159,3 +166,14 @@ export const parseGeneracySubscriptionTier = (data: unknown): GeneracySubscripti
 
 export const safeParseGeneracySubscriptionTier = (data: unknown) =>
   GeneracySubscriptionTierSchema.safeParse(data);
+
+/**
+ * Default limits for each Generacy subscription tier.
+ * null = unlimited. Used as fallback when clusterLimit / maxConcurrentExecutions are absent.
+ */
+export const GENERACY_TIER_DEFAULTS = {
+  free:       { clusterLimit: 1,    maxConcurrentExecutions: 1    },
+  starter:    { clusterLimit: 1,    maxConcurrentExecutions: 3    },
+  team:       { clusterLimit: 3,    maxConcurrentExecutions: 10   },
+  enterprise: { clusterLimit: null, maxConcurrentExecutions: null },
+} as const satisfies Record<GeneracyTier, { clusterLimit: number | null; maxConcurrentExecutions: number | null }>;

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { ISOTimestampSchema } from '../../common/timestamps.js';
 import { OrganizationIdSchema, generateOrganizationId } from '../../common/ids.js';
+import { GeneracyTierSchema } from '../subscription/generacy-tier.js';
 
 // Re-export OrganizationId types from common/ids for convenience
 export { OrganizationIdSchema, generateOrganizationId };
@@ -27,13 +28,9 @@ export type OrganizationSlug = z.infer<typeof OrganizationSlugSchema>;
 
 /**
  * Subscription tier reference for organizations.
- * Mirrors the Generacy subscription tiers from the subscription schemas.
+ * Shares source of truth with GeneracyTierSchema from subscription schemas.
  */
-export const OrganizationSubscriptionTierSchema = z.enum([
-  'starter',
-  'team',
-  'enterprise',
-]);
+export const OrganizationSubscriptionTierSchema = GeneracyTierSchema;
 export type OrganizationSubscriptionTier = z.infer<typeof OrganizationSubscriptionTierSchema>;
 
 /**

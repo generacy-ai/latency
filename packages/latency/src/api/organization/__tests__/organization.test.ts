@@ -116,8 +116,11 @@ describe('OrganizationSubscriptionTierSchema', () => {
     expect(OrganizationSubscriptionTierSchema.safeParse('enterprise').success).toBe(true);
   });
 
+  it('accepts free tier', () => {
+    expect(OrganizationSubscriptionTierSchema.safeParse('free').success).toBe(true);
+  });
+
   it('rejects invalid tier', () => {
-    expect(OrganizationSubscriptionTierSchema.safeParse('free').success).toBe(false);
     expect(OrganizationSubscriptionTierSchema.safeParse('pro').success).toBe(false);
   });
 });
@@ -162,7 +165,7 @@ describe('OrganizationSchema', () => {
     });
 
     it('accepts all subscription tiers', () => {
-      for (const tier of ['starter', 'team', 'enterprise']) {
+      for (const tier of ['free', 'starter', 'team', 'enterprise']) {
         const org = { ...validOrganization, subscriptionTier: tier };
         expect(OrganizationSchema.safeParse(org).success).toBe(true);
       }
@@ -201,7 +204,7 @@ describe('OrganizationSchema', () => {
     });
 
     it('rejects invalid subscription tier', () => {
-      const org = { ...validOrganization, subscriptionTier: 'free' };
+      const org = { ...validOrganization, subscriptionTier: 'basic' };
       const result = OrganizationSchema.safeParse(org);
       expect(result.success).toBe(false);
     });

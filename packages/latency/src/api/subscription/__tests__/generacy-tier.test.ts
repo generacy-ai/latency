@@ -7,18 +7,20 @@ import {
   generateGeneracySubscriptionId,
   parseGeneracySubscriptionTier,
   safeParseGeneracySubscriptionTier,
+  GENERACY_TIER_DEFAULTS,
 } from '../generacy-tier.js';
 
 describe('GeneracyTierSchema', () => {
   it('accepts valid tier values', () => {
+    expect(GeneracyTierSchema.safeParse('free').success).toBe(true);
     expect(GeneracyTierSchema.safeParse('starter').success).toBe(true);
     expect(GeneracyTierSchema.safeParse('team').success).toBe(true);
     expect(GeneracyTierSchema.safeParse('enterprise').success).toBe(true);
   });
 
   it('rejects invalid tier values', () => {
-    expect(GeneracyTierSchema.safeParse('free').success).toBe(false);
     expect(GeneracyTierSchema.safeParse('pro').success).toBe(false);
+    expect(GeneracyTierSchema.safeParse('basic').success).toBe(false);
     expect(GeneracyTierSchema.safeParse('STARTER').success).toBe(false);
     expect(GeneracyTierSchema.safeParse('').success).toBe(false);
   });
@@ -272,6 +274,120 @@ describe('GeneracySubscriptionTierSchema', () => {
     it('safeParseGeneracySubscriptionTier returns failure result', () => {
       const result = safeParseGeneracySubscriptionTier({});
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe('clusterLimit field', () => {
+    it('accepts valid integer clusterLimit', () => {
+      const subscription = { ...validSubscription, clusterLimit: 5 };
+      expect(GeneracySubscriptionTierSchema.safeParse(subscription).success).toBe(true);
+    });
+
+    it('accepts null clusterLimit (unlimited)', () => {
+      const subscription = { ...validSubscription, clusterLimit: null };
+      expect(GeneracySubscriptionTierSchema.safeParse(subscription).success).toBe(true);
+    });
+
+    it('accepts omitted clusterLimit (backward compat)', () => {
+      const result = GeneracySubscriptionTierSchema.safeParse(validSubscription);
+      expect(result.success).toBe(true);
+    });
+
+    it('accepts zero clusterLimit', () => {
+      const subscription = { ...validSubscription, clusterLimit: 0 };
+      expect(GeneracySubscriptionTierSchema.safeParse(subscription).success).toBe(true);
+    });
+
+    it('rejects negative clusterLimit', () => {
+      const subscription = { ...validSubscription, clusterLimit: -1 };
+      expect(GeneracySubscriptionTierSchema.safeParse(subscription).success).toBe(false);
+    });
+
+    it('rejects non-integer clusterLimit', () => {
+      const subscription = { ...validSubscription, clusterLimit: 2.5 };
+      expect(GeneracySubscriptionTierSchema.safeParse(subscription).success).toBe(false);
+    });
+  });
+
+  describe('maxConcurrentExecutions field', () => {
+    it('accepts valid positive integer', () => {
+      const subscription = { ...validSubscription, maxConcurrentExecutions: 10 };
+      expect(GeneracySubscriptionTierSchema.safeParse(subscription).success).toBe(true);
+    });
+
+    it('accepts null (unlimited)', () => {
+      const subscription = { ...validSubscription, maxConcurrentExecutions: null };
+      expect(GeneracySubscriptionTierSchema.safeParse(subscription).success).toBe(true);
+    });
+
+    it('accepts omitted (backward compat)', () => {
+      const result = GeneracySubscriptionTierSchema.safeParse(validSubscription);
+      expect(result.success).toBe(true);
+    });
+
+    it('rejects zero', () => {
+      const subscription = { ...validSubscription, maxConcurrentExecutions: 0 };
+      expect(GeneracySubscriptionTierSchema.safeParse(subscription).success).toBe(false);
+    });
+
+    it('rejects negative', () => {
+      const subscription = { ...validSubscription, maxConcurrentExecutions: -3 };
+      expect(GeneracySubscriptionTierSchema.safeParse(subscription).success).toBe(false);
+    });
+
+    it('rejects non-integer', () => {
+      const subscription = { ...validSubscription, maxConcurrentExecutions: 1.5 };
+      expect(GeneracySubscriptionTierSchema.safeParse(subscription).success).toBe(false);
+    });
+  });
+
+  describe('GENERACY_TIER_DEFAULTS', () => {
+    it('has entries for all four tiers', () => {
+      expect(Object.keys(GENERACY_TIER_DEFAULTS)).toEqual(['free', 'starter', 'team', 'enterprise']);
+    });
+
+    it('each entry has clusterLimit and maxConcurrentExecutions', () => {
+      for (const tier of Object.values(GENERACY_TIER_DEFAULTS)) {
+        expect(tier).toHaveProperty('clusterLimit');
+        expect(tier).toHaveProperty('maxConcurrentExecutions');
+      }
+    });
+
+    it('free tier has correct defaults', () => {
+      expect(GENERACY_TIER_DEFAULTS.free).toEqual({ clusterLimit: 1, maxConcurrentExecutions: 1 });
+    });
+
+    it('starter tier has correct defaults', () => {
+      expect(GENERACY_TIER_DEFAULTS.starter).toEqual({ clusterLimit: 1, maxConcurrentExecutions: 3 });
+    });
+
+    it('team tier has correct defaults', () => {
+      expect(GENERACY_TIER_DEFAULTS.team).toEqual({ clusterLimit: 3, maxConcurrentExecutions: 10 });
+    });
+
+    it('enterprise tier has unlimited defaults', () => {
+      expect(GENERACY_TIER_DEFAULTS.enterprise).toEqual({ clusterLimit: null, maxConcurrentExecutions: null });
+    });
+  });
+
+  describe('free tier subscription', () => {
+    it('accepts a full subscription object with tier: free', () => {
+      const freeSubscription = {
+        ...validSubscription,
+        tier: 'free',
+        seatCount: 1,
+        usedSeats: 1,
+        clusterLimit: 1,
+        maxConcurrentExecutions: 1,
+        entitlements: [],
+      };
+      const result = GeneracySubscriptionTierSchema.safeParse(freeSubscription);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.tier).toBe('free');
+        expect(result.data.clusterLimit).toBe(1);
+        expect(result.data.maxConcurrentExecutions).toBe(1);
+      }
     });
   });
 });
