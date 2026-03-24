@@ -10,13 +10,13 @@
 - B: Keep `Latest` on V1 — consumers opt into V2 explicitly, add `GeneracySubscriptionTierV2Schema` alias
 - C: Point `Latest` to V2 but make `interval` optional with a default (e.g., `'month'`)
 
-**Answer**: *Pending*
+**Answer**: C — Point `Latest` to V2, but make both `interval` and `priceId` optional.
 
 ### Q2: Interval Field Semantics
 **Context**: The `interval` field indicates billing cadence (`'month'` or `'year'`). A single tier (e.g., "starter") can be purchased at either interval. The subscription record already has `currentPeriodStart` and `currentPeriodEnd` which implicitly encode the interval. Adding an explicit `interval` field creates a potential consistency issue if the period dates don't match the stated interval.
 **Question**: Should there be a refinement (validation) ensuring `interval` is consistent with the period dates (e.g., `currentPeriodEnd` ≈ `currentPeriodStart` + 1 month/year), or is `interval` treated as metadata independent of period dates?
 
-**Answer**: *Pending*
+**Answer**: Treat as independent metadata — no cross-field validation against period dates.
 
 ### Q3: Free Tier Interval Value
 **Context**: The free tier has no Stripe price and no billing. The spec makes `priceId` optional for this reason, but `interval` is specified as required in V2. A free subscription doesn't have a meaningful billing interval.
@@ -26,4 +26,4 @@
 - B: Free tier uses `'month'` as a conventional default
 - C: Add `'none'` to the interval enum for free tier
 
-**Answer**: *Pending*
+**Answer**: A — Make `interval` optional; free tier omits it.
