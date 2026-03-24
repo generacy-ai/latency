@@ -38,6 +38,13 @@ export const GeneracyTierSchema = z.enum(['free', 'starter', 'team', 'enterprise
 export type GeneracyTier = z.infer<typeof GeneracyTierSchema>;
 
 /**
+ * Billing interval for subscription pricing.
+ * Maps to Stripe's recurring.interval on Price objects.
+ */
+export const BillingIntervalSchema = z.enum(['month', 'year']);
+export type BillingInterval = z.infer<typeof BillingIntervalSchema>;
+
+/**
  * Versioned GeneracySubscriptionTier schema namespace.
  *
  * Represents an organization's subscription on the Generacy platform.
@@ -64,11 +71,8 @@ export type GeneracyTier = z.infer<typeof GeneracyTierSchema>;
  * ```
  */
 export namespace GeneracySubscriptionTier {
-  /**
-   * V1: Original Generacy subscription tier schema.
-   * Organization subscriptions with seat-based licensing.
-   */
-  export const V1 = z.object({
+  // Base shape shared between versions (before refinements)
+  const baseShape = {
     /** Unique subscription identifier (ULID) */
     id: GeneracySubscriptionIdSchema,
 
@@ -113,7 +117,13 @@ export namespace GeneracySubscriptionTier {
 
     /** ISO 8601 timestamp when subscription was canceled (if canceled) */
     canceledAt: ISOTimestampSchema.optional(),
-  }).refine(
+  };
+
+  /**
+   * V1: Original Generacy subscription tier schema.
+   * Organization subscriptions with seat-based licensing.
+   */
+  export const V1 = z.object(baseShape).refine(
     (data) => data.usedSeats <= data.seatCount,
     {
       message: 'Used seats cannot exceed seat count',
@@ -130,11 +140,38 @@ export namespace GeneracySubscriptionTier {
   /** Type inference for V1 schema */
   export type V1 = z.infer<typeof V1>;
 
+  /**
+   * V2: Adds billing interval and Stripe price ID fields.
+   * Both new fields are optional for backward compatibility.
+   */
+  export const V2 = z.object({
+    ...baseShape,
+    /** Billing cadence. Omitted for free tier. */
+    interval: BillingIntervalSchema.optional(),
+    /** Active Stripe price ID. Omitted for free tier. */
+    priceId: z.string().optional(),
+  }).refine(
+    (data) => data.usedSeats <= data.seatCount,
+    {
+      message: 'Used seats cannot exceed seat count',
+      path: ['usedSeats'],
+    }
+  ).refine(
+    (data) => new Date(data.currentPeriodStart) < new Date(data.currentPeriodEnd),
+    {
+      message: 'currentPeriodStart must be before currentPeriodEnd',
+      path: ['currentPeriodStart'],
+    }
+  );
+
+  /** Type inference for V2 schema */
+  export type V2 = z.infer<typeof V2>;
+
   /** Latest stable schema - always point to the newest version */
-  export const Latest = V1;
+  export const Latest = V2;
 
   /** Type inference for latest schema */
-  export type Latest = V1;
+  export type Latest = V2;
 
   /**
    * Version registry mapping version keys to their schemas.
@@ -142,11 +179,12 @@ export namespace GeneracySubscriptionTier {
    */
   export const VERSIONS = {
     v1: V1,
+    v2: V2,
   } as const;
 
   /**
    * Get the schema for a specific version.
-   * @param version - Version key (e.g., 'v1')
+   * @param version - Version key (e.g., 'v1', 'v2')
    * @returns The schema for that version
    */
   export function getVersion(version: keyof typeof VERSIONS) {

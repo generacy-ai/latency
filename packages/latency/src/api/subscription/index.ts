@@ -49,6 +49,8 @@ export {
   generateGeneracySubscriptionId,
   GeneracyTierSchema,
   type GeneracyTier,
+  BillingIntervalSchema,
+  type BillingInterval,
   parseGeneracySubscriptionTier,
   safeParseGeneracySubscriptionTier,
   GENERACY_TIER_DEFAULTS,

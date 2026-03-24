@@ -10,7 +10,7 @@
 
 ## Phase 1: Tests (TDD — write failing tests first)
 
-- [ ] T001 [US1] Write V2 acceptance tests in `packages/latency/src/api/subscription/__tests__/generacy-tier.test.ts`
+- [X] T001 [US1] Write V2 acceptance tests in `packages/latency/src/api/subscription/__tests__/generacy-tier.test.ts`
   - Add test: V2 accepts valid `interval: 'month'` and `interval: 'year'`
   - Add test: V2 accepts valid `priceId` string (e.g., `'price_1Abc123'`)
   - Add test: V2 accepts omitted `interval` and `priceId` (backward compat with V1 data)
@@ -18,7 +18,7 @@
   - Add test: V2 rejects non-string `priceId` (e.g., number)
   - Add test: V2 preserves existing refinements (usedSeats ≤ seatCount, periodStart < periodEnd)
 
-- [ ] T002 [US1] Write versioned namespace tests for V2 in `generacy-tier.test.ts`
+- [X] T002 [US1] Write versioned namespace tests for V2 in `generacy-tier.test.ts`
   - Add test: `Latest` points to V2 (update existing test from V1)
   - Add test: `getVersion('v2')` returns V2 schema
   - Add test: V1 still accessible and unchanged via `getVersion('v1')`
@@ -26,7 +26,7 @@
 
 ## Phase 2: Core Implementation
 
-- [ ] T003 [US1] Add V2 schema to `packages/latency/src/api/subscription/generacy-tier.ts`
+- [X] T003 [US1] Add V2 schema to `packages/latency/src/api/subscription/generacy-tier.ts`
   - Define `BillingIntervalSchema = z.enum(['month', 'year'])` and export it
   - Export `BillingInterval` type via `z.infer`
   - Create V2 by extracting V1 base shape (before refinements), extending with `interval: BillingIntervalSchema.optional()` and `priceId: z.string().optional()`, then re-applying refinements
@@ -35,14 +35,14 @@
   - Update `getVersion` signature to accept `'v1' | 'v2'`
   - Keep V1 unchanged
 
-- [ ] T004 [P] [US1] Update barrel exports in `packages/latency/src/api/subscription/index.ts`
+- [X] T004 [P] [US1] Update barrel exports in `packages/latency/src/api/subscription/index.ts`
   - Add `BillingIntervalSchema` and `type BillingInterval` to the generacy-tier re-exports
 
 ## Phase 3: Verification
 
-- [ ] T005 Run `pnpm build` — confirm TypeScript compiles cleanly
-- [ ] T006 Run `pnpm test` — confirm all tests pass (new V2 tests + existing V1 tests)
-- [ ] T007 Verify `GENERACY_TIER_DEFAULTS` match confirmed values (free: 1/1, starter: 1/3, team: 3/10, enterprise: null/null) — already confirmed, no changes expected
+- [X] T005 Run `pnpm build` — confirm TypeScript compiles cleanly
+- [X] T006 Run `pnpm test` — confirm all tests pass (new V2 tests + existing V1 tests)
+- [X] T007 Verify `GENERACY_TIER_DEFAULTS` match confirmed values (free: 1/1, starter: 1/3, team: 3/10, enterprise: null/null) — already confirmed, no changes expected
 
 ## Dependencies & Execution Order
 
