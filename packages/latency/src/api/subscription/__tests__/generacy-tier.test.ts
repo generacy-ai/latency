@@ -5,6 +5,7 @@ import {
   GeneracyTierSchema,
   GeneracySubscriptionIdSchema,
   generateGeneracySubscriptionId,
+  BillingIntervalSchema,
   parseGeneracySubscriptionTier,
   safeParseGeneracySubscriptionTier,
   GENERACY_TIER_DEFAULTS,
@@ -239,20 +240,110 @@ describe('GeneracySubscriptionTierSchema', () => {
     });
   });
 
+  describe('V2 acceptance', () => {
+    it('accepts valid interval: month', () => {
+      const subscription = { ...validSubscription, interval: 'month' };
+      const result = GeneracySubscriptionTier.V2.safeParse(subscription);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.interval).toBe('month');
+      }
+    });
+
+    it('accepts valid interval: year', () => {
+      const subscription = { ...validSubscription, interval: 'year' };
+      const result = GeneracySubscriptionTier.V2.safeParse(subscription);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.interval).toBe('year');
+      }
+    });
+
+    it('accepts valid priceId string', () => {
+      const subscription = { ...validSubscription, priceId: 'price_1Abc123' };
+      const result = GeneracySubscriptionTier.V2.safeParse(subscription);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.priceId).toBe('price_1Abc123');
+      }
+    });
+
+    it('accepts omitted interval and priceId (backward compat)', () => {
+      const result = GeneracySubscriptionTier.V2.safeParse(validSubscription);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.interval).toBeUndefined();
+        expect(result.data.priceId).toBeUndefined();
+      }
+    });
+
+    it('rejects invalid interval values', () => {
+      expect(GeneracySubscriptionTier.V2.safeParse({ ...validSubscription, interval: 'week' }).success).toBe(false);
+      expect(GeneracySubscriptionTier.V2.safeParse({ ...validSubscription, interval: 'daily' }).success).toBe(false);
+      expect(GeneracySubscriptionTier.V2.safeParse({ ...validSubscription, interval: '' }).success).toBe(false);
+    });
+
+    it('rejects non-string priceId', () => {
+      expect(GeneracySubscriptionTier.V2.safeParse({ ...validSubscription, priceId: 123 }).success).toBe(false);
+      expect(GeneracySubscriptionTier.V2.safeParse({ ...validSubscription, priceId: true }).success).toBe(false);
+    });
+
+    it('preserves usedSeats <= seatCount refinement', () => {
+      const subscription = { ...validSubscription, interval: 'month', priceId: 'price_1Abc123', seatCount: 5, usedSeats: 10 };
+      const result = GeneracySubscriptionTier.V2.safeParse(subscription);
+      expect(result.success).toBe(false);
+    });
+
+    it('preserves periodStart < periodEnd refinement', () => {
+      const subscription = {
+        ...validSubscription,
+        interval: 'year',
+        currentPeriodStart: '2024-03-01T00:00:00Z',
+        currentPeriodEnd: '2024-02-01T00:00:00Z',
+      };
+      const result = GeneracySubscriptionTier.V2.safeParse(subscription);
+      expect(result.success).toBe(false);
+    });
+  });
+
   describe('versioned namespace', () => {
     it('supports V1 schema access', () => {
       const result = GeneracySubscriptionTier.V1.safeParse(validSubscription);
       expect(result.success).toBe(true);
     });
 
-    it('supports getVersion helper', () => {
+    it('supports getVersion helper for v1', () => {
       const schema = GeneracySubscriptionTier.getVersion('v1');
       const result = schema.safeParse(validSubscription);
       expect(result.success).toBe(true);
     });
 
-    it('Latest points to V1', () => {
-      expect(GeneracySubscriptionTier.Latest).toBe(GeneracySubscriptionTier.V1);
+    it('Latest points to V2', () => {
+      expect(GeneracySubscriptionTier.Latest).toBe(GeneracySubscriptionTier.V2);
+    });
+
+    it('getVersion returns V2 schema', () => {
+      const schema = GeneracySubscriptionTier.getVersion('v2');
+      const result = schema.safeParse({ ...validSubscription, interval: 'month', priceId: 'price_test' });
+      expect(result.success).toBe(true);
+    });
+
+    it('V1 still accessible and unchanged', () => {
+      const result = GeneracySubscriptionTier.V1.safeParse(validSubscription);
+      expect(result.success).toBe(true);
+      // V1 should not accept interval/priceId as known fields (they pass through as excess but are stripped)
+      expect(GeneracySubscriptionTier.V1).not.toBe(GeneracySubscriptionTier.V2);
+    });
+
+    it('BillingIntervalSchema accepts month and year', () => {
+      expect(BillingIntervalSchema.safeParse('month').success).toBe(true);
+      expect(BillingIntervalSchema.safeParse('year').success).toBe(true);
+    });
+
+    it('BillingIntervalSchema rejects invalid values', () => {
+      expect(BillingIntervalSchema.safeParse('week').success).toBe(false);
+      expect(BillingIntervalSchema.safeParse('daily').success).toBe(false);
+      expect(BillingIntervalSchema.safeParse('').success).toBe(false);
     });
   });
 
