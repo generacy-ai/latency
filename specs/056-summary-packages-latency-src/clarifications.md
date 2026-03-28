@@ -10,7 +10,7 @@
 - B: Rename to `gitlab_bitbucket_integration` for explicitness
 - C: Split into two separate features: `gitlab_integration` and `bitbucket_integration`
 
-**Answer**: *Pending*
+**Answer**: C** — Split into two separate features: `gitlab_integration` and `bitbucket_integration`. They are distinct platforms and may need independent gating in the future (e.g., Bitbucket support could ship later than GitLab). Combining them into one flag creates a false coupling.
 
 ### Q2: File Placement of GENERACY_TIER_FEATURES
 **Context**: `generacy-tier.ts` already imports `FeatureEntitlementSchema` from `feature-entitlement.ts`. The spec implies adding `GENERACY_TIER_FEATURES` to `feature-entitlement.ts`, but this constant needs the `GeneracyTier` type, which would create a circular import. The pattern to follow (`GENERACY_TIER_DEFAULTS`) lives in `generacy-tier.ts`.
@@ -20,4 +20,4 @@
 - B: Place in `feature-entitlement.ts` using inline string literals instead of importing `GeneracyTier`
 - C: Create a new file (e.g., `tier-features.ts`) to hold the mapping
 
-**Answer**: *Pending*
+**Answer**: A** — Place in `generacy-tier.ts` alongside `GENERACY_TIER_DEFAULTS`. This follows the existing pattern and avoids the circular dependency. Import `PlanFeature` from `feature-entitlement.ts` (leaf → root direction is fine).
