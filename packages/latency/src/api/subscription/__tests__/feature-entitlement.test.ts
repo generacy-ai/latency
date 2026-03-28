@@ -3,6 +3,7 @@ import {
   FeatureEntitlementSchema,
   FeatureEntitlement,
   ResetPeriodSchema,
+  PlanFeatureSchema,
   parseFeatureEntitlement,
   safeParseFeatureEntitlement,
 } from '../feature-entitlement.js';
@@ -20,6 +21,36 @@ describe('ResetPeriodSchema', () => {
     expect(ResetPeriodSchema.safeParse('hourly').success).toBe(false);
     expect(ResetPeriodSchema.safeParse('DAILY').success).toBe(false);
     expect(ResetPeriodSchema.safeParse('').success).toBe(false);
+  });
+});
+
+describe('PlanFeatureSchema', () => {
+  const knownFeatures = [
+    'github_integration',
+    'gitlab_integration',
+    'bitbucket_integration',
+    'sso_saml',
+    'audit_logs',
+    'priority_support',
+  ];
+
+  it('accepts all six known feature identifiers', () => {
+    for (const feature of knownFeatures) {
+      expect(PlanFeatureSchema.safeParse(feature).success).toBe(true);
+    }
+  });
+
+  it('rejects unknown strings', () => {
+    expect(PlanFeatureSchema.safeParse('unknown_feature').success).toBe(false);
+    expect(PlanFeatureSchema.safeParse('GITHUB_INTEGRATION').success).toBe(false);
+    expect(PlanFeatureSchema.safeParse('').success).toBe(false);
+  });
+
+  it('all enum values are non-empty strings', () => {
+    for (const value of PlanFeatureSchema.options) {
+      expect(typeof value).toBe('string');
+      expect(value.length).toBeGreaterThan(0);
+    }
   });
 });
 

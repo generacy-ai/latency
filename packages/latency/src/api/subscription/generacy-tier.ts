@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ulid } from 'ulid';
 import { ISOTimestampSchema } from '../../common/timestamps.js';
-import { FeatureEntitlementSchema } from './feature-entitlement.js';
+import { FeatureEntitlementSchema, type PlanFeature, PlanFeatureSchema } from './feature-entitlement.js';
 import { SubscriptionStatusSchema } from './humancy-tier.js';
 
 // ULID regex: 26 characters, Crockford Base32
@@ -215,3 +215,14 @@ export const GENERACY_TIER_DEFAULTS = {
   team:       { clusterLimit: 3,    maxConcurrentExecutions: 10   },
   enterprise: { clusterLimit: null, maxConcurrentExecutions: null },
 } as const satisfies Record<GeneracyTier, { clusterLimit: number | null; maxConcurrentExecutions: number | null }>;
+
+/**
+ * Default feature entitlements for each Generacy subscription tier.
+ * Team and Enterprise tiers get all known features automatically via PlanFeatureSchema.options.
+ */
+export const GENERACY_TIER_FEATURES = {
+  free:       ['github_integration'] as const,
+  starter:    ['github_integration'] as const,
+  team:       PlanFeatureSchema.options,
+  enterprise: PlanFeatureSchema.options,
+} as const satisfies Record<GeneracyTier, readonly PlanFeature[]>;

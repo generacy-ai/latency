@@ -9,7 +9,9 @@ import {
   parseGeneracySubscriptionTier,
   safeParseGeneracySubscriptionTier,
   GENERACY_TIER_DEFAULTS,
+  GENERACY_TIER_FEATURES,
 } from '../generacy-tier.js';
+import { PlanFeatureSchema } from '../feature-entitlement.js';
 
 describe('GeneracyTierSchema', () => {
   it('accepts valid tier values', () => {
@@ -458,6 +460,38 @@ describe('GeneracySubscriptionTierSchema', () => {
 
     it('enterprise tier has unlimited defaults', () => {
       expect(GENERACY_TIER_DEFAULTS.enterprise).toEqual({ clusterLimit: null, maxConcurrentExecutions: null });
+    });
+  });
+
+  describe('GENERACY_TIER_FEATURES', () => {
+    it('has entries for all four tiers', () => {
+      expect(Object.keys(GENERACY_TIER_FEATURES)).toEqual(['free', 'starter', 'team', 'enterprise']);
+    });
+
+    it('free tier contains only github_integration', () => {
+      expect(GENERACY_TIER_FEATURES.free).toEqual(['github_integration']);
+    });
+
+    it('starter tier contains only github_integration', () => {
+      expect(GENERACY_TIER_FEATURES.starter).toEqual(['github_integration']);
+    });
+
+    it('team tier contains all six features', () => {
+      expect(GENERACY_TIER_FEATURES.team).toHaveLength(6);
+      expect(GENERACY_TIER_FEATURES.team).toEqual(PlanFeatureSchema.options);
+    });
+
+    it('enterprise tier contains all six features', () => {
+      expect(GENERACY_TIER_FEATURES.enterprise).toHaveLength(6);
+      expect(GENERACY_TIER_FEATURES.enterprise).toEqual(PlanFeatureSchema.options);
+    });
+
+    it('every value in the mapping is a valid PlanFeature', () => {
+      for (const features of Object.values(GENERACY_TIER_FEATURES)) {
+        for (const feature of features) {
+          expect(PlanFeatureSchema.safeParse(feature).success).toBe(true);
+        }
+      }
     });
   });
 
