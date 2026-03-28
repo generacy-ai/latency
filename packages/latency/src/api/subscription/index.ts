@@ -8,6 +8,8 @@ export {
   type FeatureEntitlement as FeatureEntitlementType,
   ResetPeriodSchema,
   type ResetPeriod,
+  PlanFeatureSchema,
+  type PlanFeature,
   parseFeatureEntitlement,
   safeParseFeatureEntitlement,
 } from './feature-entitlement.js';
@@ -54,4 +56,5 @@ export {
   parseGeneracySubscriptionTier,
   safeParseGeneracySubscriptionTier,
   GENERACY_TIER_DEFAULTS,
+  GENERACY_TIER_FEATURES,
 } from './generacy-tier.js';

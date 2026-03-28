@@ -7,6 +7,21 @@ export const ResetPeriodSchema = z.enum(['daily', 'weekly', 'monthly', 'yearly',
 export type ResetPeriod = z.infer<typeof ResetPeriodSchema>;
 
 /**
+ * Known plan feature identifiers for subscription entitlements.
+ * This is a recommended set — the FeatureEntitlement.feature field
+ * remains z.string() to allow custom features alongside these.
+ */
+export const PlanFeatureSchema = z.enum([
+  'github_integration',
+  'gitlab_integration',
+  'bitbucket_integration',
+  'sso_saml',
+  'audit_logs',
+  'priority_support',
+]);
+export type PlanFeature = z.infer<typeof PlanFeatureSchema>;
+
+/**
  * Versioned FeatureEntitlement schema namespace.
  *
  * Defines feature access permissions within a subscription tier.
