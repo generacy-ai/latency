@@ -1,20 +1,22 @@
-# Feature Specification: Typed Feature Entitlement Enum and Tier Mapping
+# Feature Specification: ## Summary
+
+`packages/latency/src/api/subscription/feature-entitlement
 
 **Branch**: `056-summary-packages-latency-src` | **Date**: 2026-03-28 | **Status**: Draft
 
 ## Summary
 
-`packages/latency/src/api/subscription/feature-entitlement.ts` uses a generic `string` for the `feature` field. The billing implementation plan defines specific per-tier feature entitlements that should be typed and mapped. This feature adds a `PlanFeature` enum, updates the schema, and introduces a `GENERACY_TIER_FEATURES` constant mapping each `GeneracyTier` to its entitled features.
+## Summary
+
+`packages/latency/src/api/subscription/feature-entitlement.ts` uses a generic `string` for the `feature` field. The billing implementation plan defines specific per-tier feature entitlements that should be typed and mapped.
 
 ## Context
 
 - **Plan reference**: [Stripe Billing Implementation Plan — Feature Entitlements by Tier](https://github.com/generacy-ai/tetrad-development/blob/develop/docs/stripe-billing-implementation-plan.md#feature-entitlements-by-tier)
 - **File**: `packages/latency/src/api/subscription/feature-entitlement.ts`
 - The current schema works but provides no type safety or discoverability for plan features
-- `GeneracyTier` is already defined in `generacy-tier.ts` as `z.enum(['free', 'starter', 'team', 'enterprise'])`
-- `GENERACY_TIER_DEFAULTS` in the same file already establishes the pattern for tier-keyed constants
 
-## Planned Features per Tier
+## Planned features per tier
 
 | Feature | Free | Starter | Team | Enterprise |
 |---------|------|---------|------|------------|
@@ -24,65 +26,52 @@
 | Audit logs | No | No | Yes | Yes |
 | Priority support | No | No | Yes | Yes |
 
+## Requirements
+
+1. Add a `PlanFeature` enum or z.enum with known feature identifiers (e.g., `github_integration`, `gitlab_integration`, `sso_saml`, `audit_logs`, `priority_support`)
+2. Optionally update `FeatureEntitlementSchema.feature` to use the enum (or keep as string with the enum as a recommended set)
+3. Add a `GENERACY_TIER_FEATURES` constant mapping each `GeneracyTier` to its feature entitlements
+4. Export types for consumers
+
+## Test plan
+
+- [ ] Schema validates known feature identifiers
+- [ ] GENERACY_TIER_FEATURES maps all tiers correctly
+- [ ] Existing consumers of FeatureEntitlementSchema still compile
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
 ## User Stories
 
-### US1: Developer Consuming Feature Entitlements
+### US1: [Primary User Story]
 
-**As a** developer building feature-gated UI or API logic,
-**I want** typed feature identifiers and a tier-to-feature mapping,
-**So that** I get compile-time safety and autocomplete when checking feature access, rather than relying on magic strings.
-
-**Acceptance Criteria**:
-- [ ] `PlanFeature` enum/z.enum provides autocomplete for known features
-- [ ] Typos in feature identifiers are caught at compile time
-- [ ] `GENERACY_TIER_FEATURES` maps each tier to its entitled features
-
-### US2: Backward Compatibility for Existing Consumers
-
-**As a** maintainer of code that already uses `FeatureEntitlementSchema`,
-**I want** the schema to remain compatible with arbitrary string feature identifiers,
-**So that** existing consumers don't break when the enum is introduced.
+**As a** [user type],
+**I want** [capability],
+**So that** [benefit].
 
 **Acceptance Criteria**:
-- [ ] Existing code passing string feature identifiers still compiles
-- [ ] Schema validation still accepts arbitrary strings (enum is a recommended set, not a constraint — or a union approach is used)
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]
 
 ## Functional Requirements
 
 | ID | Requirement | Priority | Notes |
 |----|-------------|----------|-------|
-| FR-001 | Add `PlanFeature` z.enum with identifiers: `github_integration`, `gitlab_integration`, `sso_saml`, `audit_logs`, `priority_support` | P1 | Matches billing plan table |
-| FR-002 | Keep `FeatureEntitlementSchema.feature` as `z.string()` (or use union with enum) to maintain backward compat | P1 | Avoids breaking existing consumers |
-| FR-003 | Add `GENERACY_TIER_FEATURES` constant mapping `GeneracyTier` → `PlanFeature[]` | P1 | Follows pattern of `GENERACY_TIER_DEFAULTS` |
-| FR-004 | Export `PlanFeature` type and `GENERACY_TIER_FEATURES` from subscription index | P1 | Consumers need access |
+| FR-001 | [Description] | P1 | |
 
 ## Success Criteria
 
 | ID | Metric | Target | Measurement |
 |----|--------|--------|-------------|
-| SC-001 | Schema validates known feature identifiers | All 5 features parse successfully | Unit test |
-| SC-002 | GENERACY_TIER_FEATURES maps all 4 tiers correctly | Each tier has correct feature set per table | Unit test |
-| SC-003 | Existing FeatureEntitlementSchema consumers still compile | Zero type errors in existing code | `pnpm build` passes |
-
-## Test Plan
-
-- [ ] Schema validates known feature identifiers (all 5 `PlanFeature` values)
-- [ ] `GENERACY_TIER_FEATURES` maps all tiers correctly against the feature table
-- [ ] Existing consumers of `FeatureEntitlementSchema` still compile
-- [ ] `PlanFeature` enum values are exported and usable by consumers
+| SC-001 | [Metric] | [Target] | [How to measure] |
 
 ## Assumptions
 
-- The 5 features listed in the billing plan are the initial set; the enum can be extended later
-- `FeatureEntitlementSchema.feature` should remain permissive (string) to allow custom/future features without schema changes
-- The tier-features mapping is a static constant, not loaded from a remote config
+- [Assumption 1]
 
 ## Out of Scope
 
-- Runtime feature flag evaluation or entitlement checking logic
-- Stripe API integration for syncing entitlements
-- UI components for feature gating
-- Migration of existing data that uses string feature identifiers
+- [Exclusion 1]
 
 ---
 
