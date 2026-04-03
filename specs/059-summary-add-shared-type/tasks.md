@@ -10,12 +10,12 @@
 
 ## Phase 1: Setup — UserId Branded Type
 
-- [ ] T001 Add `UserId` branded type and `UserIdSchema` to `packages/latency/src/common/ids.ts` — use `z.string().min(1)` pattern (not ULID), matching `QueueItemId`/`JobId` precedent. No generator function.
-- [ ] T002 Export `UserId` and `UserIdSchema` from `packages/latency/src/common/index.ts` — add to the IDs export block.
+- [X] T001 Add `UserId` branded type and `UserIdSchema` to `packages/latency/src/common/ids.ts` — use `z.string().min(1)` pattern (not ULID), matching `QueueItemId`/`JobId` precedent. No generator function.
+- [X] T002 Export `UserId` and `UserIdSchema` from `packages/latency/src/common/index.ts` — add to the IDs export block.
 
 ## Phase 2: V2 Schema Implementation
 
-- [ ] T003 [P] [US1] Add V2 schema to `ExecutionLease` namespace in `packages/latency/src/api/execution/execution-lease.ts`:
+- [X] T003 [P] [US1] Add V2 schema to `ExecutionLease` namespace in `packages/latency/src/api/execution/execution-lease.ts`:
   - Import `UserIdSchema` and `OrganizationIdSchema` from `../../common/ids.js`
   - Extract V1 field definitions into a `v1Shape` const (refactor, no behavior change)
   - Define `V2` schema spreading `v1Shape` plus `userId: UserIdSchema` and `orgId: OrganizationIdSchema`
@@ -24,7 +24,7 @@
   - Add `v2` to `VERSIONS` registry
   - Add `V2` type inference
 
-- [ ] T004 [P] [US2] Add V2 schema to `ClusterRegistration` namespace in `packages/latency/src/api/execution/cluster-registration.ts`:
+- [X] T004 [P] [US2] Add V2 schema to `ClusterRegistration` namespace in `packages/latency/src/api/execution/cluster-registration.ts`:
   - Import `UserIdSchema` and `OrganizationIdSchema` from `../../common/ids.js`
   - Extract V1 field definitions into a `v1Shape` const (refactor, no behavior change)
   - Define `V2` schema spreading `v1Shape` plus `userId: UserIdSchema` and `orgId: OrganizationIdSchema`
@@ -33,11 +33,11 @@
   - Add `v2` to `VERSIONS` registry
   - Add `V2` type inference
 
-- [ ] T005 [P] Update `packages/latency/src/api/execution/index.ts` — add `UserId` type to the ID re-export line.
+- [X] T005 [P] Update `packages/latency/src/api/execution/index.ts` — add `UserId` type to the ID re-export line.
 
 ## Phase 3: Tests
 
-- [ ] T006 [P] [US1] Add V2 test cases to `packages/latency/src/api/execution/__tests__/execution-lease.test.ts`:
+- [X] T006 [P] [US1] Add V2 test cases to `packages/latency/src/api/execution/__tests__/execution-lease.test.ts`:
   - Valid V2 object with userId + orgId
   - Rejection of missing userId
   - Rejection of missing orgId
@@ -48,7 +48,7 @@
   - `getVersion('v2')` returns V2 schema
   - Parse helpers use V2 (require userId/orgId)
 
-- [ ] T007 [P] [US2] Add V2 test cases to `packages/latency/src/api/execution/__tests__/cluster-registration.test.ts`:
+- [X] T007 [P] [US2] Add V2 test cases to `packages/latency/src/api/execution/__tests__/cluster-registration.test.ts`:
   - Valid V2 object with userId + orgId
   - Rejection of missing userId
   - Rejection of missing orgId
@@ -61,7 +61,7 @@
 
 ## Phase 4: Verification
 
-- [ ] T008 Run `pnpm build` and `pnpm test` to verify all tests pass and types compile correctly.
+- [X] T008 Run `pnpm build` and `pnpm test` to verify all tests pass and types compile correctly.
 
 ## Dependencies & Execution Order
 

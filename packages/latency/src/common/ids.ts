@@ -18,6 +18,7 @@ export type ClusterId = string & { readonly __brand: 'ClusterId' };
 export type QueueItemId = string & { readonly __brand: 'QueueItemId' };
 export type JobId = string & { readonly __brand: 'JobId' };
 export type ProjectId = string & { readonly __brand: 'ProjectId' };
+export type UserId = string & { readonly __brand: 'UserId' };
 
 // Zod schemas with ULID validation
 export const CorrelationIdSchema = z
@@ -84,6 +85,11 @@ export const ProjectIdSchema = z
   .string()
   .min(1, 'ProjectId must not be empty')
   .transform((val) => val as ProjectId);
+
+export const UserIdSchema = z
+  .string()
+  .min(1, 'UserId must not be empty')
+  .transform((val) => val as UserId);
 
 // ID generation utilities
 export function generateCorrelationId(): CorrelationId {

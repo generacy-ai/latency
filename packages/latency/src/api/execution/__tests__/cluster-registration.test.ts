@@ -52,6 +52,8 @@ describe('ClusterRegistrationSchema', () => {
     lastSeen: '2024-01-15T10:35:00Z',
     workers: { total: 10, busy: 3, idle: 5 },
     orchestratorVersion: '1.2.3',
+    userId: 'firebase-uid-abc123',
+    orgId: '01HQVJ5KWXYZ1234567890ABCE',
   };
 
   describe('valid registrations', () => {
@@ -194,8 +196,8 @@ describe('ClusterRegistrationSchema', () => {
       expect(result.success).toBe(true);
     });
 
-    it('Latest points to V1', () => {
-      expect(ClusterRegistration.Latest).toBe(ClusterRegistration.V1);
+    it('Latest points to V2', () => {
+      expect(ClusterRegistration.Latest).toBe(ClusterRegistration.V2);
     });
   });
 
@@ -217,6 +219,81 @@ describe('ClusterRegistrationSchema', () => {
     it('safeParseClusterRegistration returns failure result', () => {
       const result = safeParseClusterRegistration({});
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe('V2 schema', () => {
+    // V1-only fixture (no userId/orgId) for rejection tests
+    const v1OnlyRegistration = {
+      id: '01HQVJ5KWXYZ1234567890ABCD',
+      projectId: 'proj-789',
+      status: 'connected' as const,
+      connectedAt: '2024-01-15T10:30:00Z',
+      lastSeen: '2024-01-15T10:35:00Z',
+      workers: { total: 10, busy: 3, idle: 5 },
+      orchestratorVersion: '1.2.3',
+    };
+
+    it('accepts valid V2 registration with userId and orgId', () => {
+      const result = ClusterRegistration.V2.safeParse(validRegistration);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.userId).toBe('firebase-uid-abc123');
+        expect(result.data.orgId).toBe('01HQVJ5KWXYZ1234567890ABCE');
+      }
+    });
+
+    it('rejects missing userId', () => {
+      const result = ClusterRegistration.V2.safeParse(v1OnlyRegistration);
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects missing orgId', () => {
+      const result = ClusterRegistration.V2.safeParse({
+        ...v1OnlyRegistration,
+        userId: 'firebase-uid-abc123',
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects empty userId', () => {
+      const result = ClusterRegistration.V2.safeParse({
+        ...validRegistration,
+        userId: '',
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects invalid orgId', () => {
+      const result = ClusterRegistration.V2.safeParse({
+        ...validRegistration,
+        orgId: 'not-a-ulid',
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it('V1 still works via getVersion', () => {
+      const schema = ClusterRegistration.getVersion('v1');
+      const result = schema.safeParse(v1OnlyRegistration);
+      expect(result.success).toBe(true);
+    });
+
+    it('Latest now points to V2', () => {
+      expect(ClusterRegistration.Latest).toBe(ClusterRegistration.V2);
+    });
+
+    it('getVersion("v2") returns V2 schema', () => {
+      const schema = ClusterRegistration.getVersion('v2');
+      expect(schema).toBe(ClusterRegistration.V2);
+      const result = schema.safeParse(validRegistration);
+      expect(result.success).toBe(true);
+    });
+
+    it('parse helpers use V2 (require userId/orgId)', () => {
+      const registration = parseClusterRegistration(validRegistration);
+      expect(registration.userId).toBe('firebase-uid-abc123');
+      expect(registration.orgId).toBe('01HQVJ5KWXYZ1234567890ABCE');
+      expect(() => parseClusterRegistration(v1OnlyRegistration)).toThrow();
     });
   });
 });
