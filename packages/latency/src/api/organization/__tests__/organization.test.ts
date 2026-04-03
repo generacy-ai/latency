@@ -104,12 +104,16 @@ describe('OrganizationSlugSchema', () => {
 });
 
 describe('OrganizationSubscriptionTierSchema', () => {
-  it('accepts starter tier', () => {
-    expect(OrganizationSubscriptionTierSchema.safeParse('starter').success).toBe(true);
+  it('accepts basic tier', () => {
+    expect(OrganizationSubscriptionTierSchema.safeParse('basic').success).toBe(true);
   });
 
-  it('accepts team tier', () => {
-    expect(OrganizationSubscriptionTierSchema.safeParse('team').success).toBe(true);
+  it('accepts standard tier', () => {
+    expect(OrganizationSubscriptionTierSchema.safeParse('standard').success).toBe(true);
+  });
+
+  it('accepts professional tier', () => {
+    expect(OrganizationSubscriptionTierSchema.safeParse('professional').success).toBe(true);
   });
 
   it('accepts enterprise tier', () => {
@@ -118,6 +122,11 @@ describe('OrganizationSubscriptionTierSchema', () => {
 
   it('accepts free tier', () => {
     expect(OrganizationSubscriptionTierSchema.safeParse('free').success).toBe(true);
+  });
+
+  it('rejects old tier names', () => {
+    expect(OrganizationSubscriptionTierSchema.safeParse('starter').success).toBe(false);
+    expect(OrganizationSubscriptionTierSchema.safeParse('team').success).toBe(false);
   });
 
   it('rejects invalid tier', () => {
@@ -131,7 +140,7 @@ describe('OrganizationSchema', () => {
     name: 'Acme Corporation',
     slug: 'acme-corp',
     ownerId: '01ARZ3NDEKTSV4RRFFQ69G5FAV',
-    subscriptionTier: 'team',
+    subscriptionTier: 'standard',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z',
   };
@@ -142,7 +151,7 @@ describe('OrganizationSchema', () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.name).toBe('Acme Corporation');
-        expect(result.data.subscriptionTier).toBe('team');
+        expect(result.data.subscriptionTier).toBe('standard');
       }
     });
 
@@ -165,7 +174,7 @@ describe('OrganizationSchema', () => {
     });
 
     it('accepts all subscription tiers', () => {
-      for (const tier of ['free', 'starter', 'team', 'enterprise']) {
+      for (const tier of ['free', 'basic', 'standard', 'professional', 'enterprise']) {
         const org = { ...validOrganization, subscriptionTier: tier };
         expect(OrganizationSchema.safeParse(org).success).toBe(true);
       }
@@ -204,7 +213,7 @@ describe('OrganizationSchema', () => {
     });
 
     it('rejects invalid subscription tier', () => {
-      const org = { ...validOrganization, subscriptionTier: 'basic' };
+      const org = { ...validOrganization, subscriptionTier: 'starter' };
       const result = OrganizationSchema.safeParse(org);
       expect(result.success).toBe(false);
     });

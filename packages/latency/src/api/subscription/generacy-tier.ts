@@ -29,12 +29,13 @@ export function generateGeneracySubscriptionId(): GeneracySubscriptionId {
 
 /**
  * Organization subscription tiers for Generacy platform.
- * Free: Limited access, single cluster, single execution
- * Starter: Small teams, basic features
- * Team: Growing teams, advanced collaboration
+ * Free: Limited access, single cluster
+ * Basic: Individual developers, basic features
+ * Standard: Small teams, standard collaboration
+ * Professional: Growing teams, advanced features
  * Enterprise: Large organizations, full features, SLA
  */
-export const GeneracyTierSchema = z.enum(['free', 'starter', 'team', 'enterprise']);
+export const GeneracyTierSchema = z.enum(['free', 'basic', 'standard', 'professional', 'enterprise']);
 export type GeneracyTier = z.infer<typeof GeneracyTierSchema>;
 
 /**
@@ -54,7 +55,7 @@ export type BillingInterval = z.infer<typeof BillingIntervalSchema>;
  * ```typescript
  * const subscription = GeneracySubscriptionTier.Latest.parse({
  *   id: '01HQVJ5KWXYZ1234567890ABCD',
- *   tier: 'team',
+ *   tier: 'standard',
  *   orgId: '01HQVJ5KWXYZ1234567890ORGG',
  *   status: 'active',
  *   seatCount: 50,
@@ -115,6 +116,9 @@ export namespace GeneracySubscriptionTier {
     /** Maximum concurrent executions. null = unlimited, undefined = use tier default */
     maxConcurrentExecutions: z.number().int().positive().nullable().optional(),
 
+    /** Maximum concurrent workflows. null = unlimited, undefined = use tier default */
+    maxConcurrentWorkflows: z.number().int().positive().nullable().optional(),
+
     /** ISO 8601 timestamp when subscription was canceled (if canceled) */
     canceledAt: ISOTimestampSchema.optional(),
   };
@@ -167,11 +171,40 @@ export namespace GeneracySubscriptionTier {
   /** Type inference for V2 schema */
   export type V2 = z.infer<typeof V2>;
 
+  /**
+   * V3: Adds maxConcurrentWorkflows as the canonical concurrent limit field.
+   * Both new fields are optional for backward compatibility.
+   */
+  export const V3 = z.object({
+    ...baseShape,
+    /** Billing cadence. Omitted for free tier. */
+    interval: BillingIntervalSchema.optional(),
+    /** Active Stripe price ID. Omitted for free tier. */
+    priceId: z.string().optional(),
+    /** Maximum concurrent workflows. null = unlimited, undefined = use tier default */
+    maxConcurrentWorkflows: z.number().int().positive().nullable().optional(),
+  }).refine(
+    (data) => data.usedSeats <= data.seatCount,
+    {
+      message: 'Used seats cannot exceed seat count',
+      path: ['usedSeats'],
+    }
+  ).refine(
+    (data) => new Date(data.currentPeriodStart) < new Date(data.currentPeriodEnd),
+    {
+      message: 'currentPeriodStart must be before currentPeriodEnd',
+      path: ['currentPeriodStart'],
+    }
+  );
+
+  /** Type inference for V3 schema */
+  export type V3 = z.infer<typeof V3>;
+
   /** Latest stable schema - always point to the newest version */
-  export const Latest = V2;
+  export const Latest = V3;
 
   /** Type inference for latest schema */
-  export type Latest = V2;
+  export type Latest = V3;
 
   /**
    * Version registry mapping version keys to their schemas.
@@ -180,6 +213,7 @@ export namespace GeneracySubscriptionTier {
   export const VERSIONS = {
     v1: V1,
     v2: V2,
+    v3: V3,
   } as const;
 
   /**
@@ -207,22 +241,24 @@ export const safeParseGeneracySubscriptionTier = (data: unknown) =>
 
 /**
  * Default limits for each Generacy subscription tier.
- * null = unlimited. Used as fallback when clusterLimit / maxConcurrentExecutions are absent.
+ * null = unlimited. Used as fallback when clusterLimit / maxConcurrentWorkflows are absent.
  */
 export const GENERACY_TIER_DEFAULTS = {
-  free:       { clusterLimit: 1,    maxConcurrentExecutions: 1    },
-  starter:    { clusterLimit: 1,    maxConcurrentExecutions: 3    },
-  team:       { clusterLimit: 3,    maxConcurrentExecutions: 10   },
-  enterprise: { clusterLimit: null, maxConcurrentExecutions: null },
-} as const satisfies Record<GeneracyTier, { clusterLimit: number | null; maxConcurrentExecutions: number | null }>;
+  free:         { clusterLimit: 1,    maxConcurrentWorkflows: 1,    cloudUiEnabled: false },
+  basic:        { clusterLimit: 2,    maxConcurrentWorkflows: 2,    cloudUiEnabled: true  },
+  standard:     { clusterLimit: 3,    maxConcurrentWorkflows: 5,    cloudUiEnabled: true  },
+  professional: { clusterLimit: 4,    maxConcurrentWorkflows: 10,   cloudUiEnabled: true  },
+  enterprise:   { clusterLimit: null, maxConcurrentWorkflows: null, cloudUiEnabled: true  },
+} as const satisfies Record<GeneracyTier, { clusterLimit: number | null; maxConcurrentWorkflows: number | null; cloudUiEnabled: boolean }>;
 
 /**
  * Default feature entitlements for each Generacy subscription tier.
- * Team and Enterprise tiers get all known features automatically via PlanFeatureSchema.options.
+ * All paid tiers get all known features automatically via PlanFeatureSchema.options.
  */
 export const GENERACY_TIER_FEATURES = {
-  free:       ['github_integration'] as const,
-  starter:    ['github_integration'] as const,
-  team:       PlanFeatureSchema.options,
-  enterprise: PlanFeatureSchema.options,
+  free:         ['github_integration'] as const,
+  basic:        PlanFeatureSchema.options,
+  standard:     PlanFeatureSchema.options,
+  professional: PlanFeatureSchema.options,
+  enterprise:   PlanFeatureSchema.options,
 } as const satisfies Record<GeneracyTier, readonly PlanFeature[]>;
