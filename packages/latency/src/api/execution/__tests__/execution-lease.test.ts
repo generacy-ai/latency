@@ -30,6 +30,8 @@ describe('ExecutionLeaseSchema', () => {
     grantedAt: '2024-01-15T10:30:00Z',
     lastHeartbeat: '2024-01-15T10:35:00Z',
     ttlSeconds: 90,
+    userId: 'firebase-uid-abc123',
+    orgId: '01HQVJ5KWXYZ1234567890ABCE',
   };
 
   describe('valid leases', () => {
@@ -146,8 +148,8 @@ describe('ExecutionLeaseSchema', () => {
       expect(result.success).toBe(true);
     });
 
-    it('Latest points to V1', () => {
-      expect(ExecutionLease.Latest).toBe(ExecutionLease.V1);
+    it('Latest points to V2', () => {
+      expect(ExecutionLease.Latest).toBe(ExecutionLease.V2);
     });
   });
 
@@ -169,6 +171,75 @@ describe('ExecutionLeaseSchema', () => {
     it('safeParseExecutionLease returns failure result', () => {
       const result = safeParseExecutionLease({});
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe('V2 schema', () => {
+    // V1-only fixture (no userId/orgId) for rejection tests
+    const v1OnlyLease = {
+      id: '01HQVJ5KWXYZ1234567890ABCD',
+      clusterId: '01HQVJ5KWXYZ1234567890EFGH',
+      queueItemId: 'qi-123',
+      jobId: 'job-456',
+      status: 'active' as const,
+      grantedAt: '2024-01-15T10:30:00Z',
+      lastHeartbeat: '2024-01-15T10:35:00Z',
+      ttlSeconds: 90,
+    };
+
+    it('accepts valid V2 lease with userId and orgId', () => {
+      const result = ExecutionLease.V2.safeParse(validLease);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.userId).toBe('firebase-uid-abc123');
+        expect(result.data.orgId).toBe('01HQVJ5KWXYZ1234567890ABCE');
+      }
+    });
+
+    it('rejects missing userId', () => {
+      const result = ExecutionLease.V2.safeParse(v1OnlyLease);
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects missing orgId', () => {
+      const lease = { ...v1OnlyLease, userId: 'firebase-uid-abc123' };
+      const result = ExecutionLease.V2.safeParse(lease);
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects empty userId', () => {
+      const lease = { ...validLease, userId: '' };
+      const result = ExecutionLease.V2.safeParse(lease);
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects invalid orgId', () => {
+      const lease = { ...validLease, orgId: 'not-a-ulid' };
+      const result = ExecutionLease.V2.safeParse(lease);
+      expect(result.success).toBe(false);
+    });
+
+    it('V1 still works via getVersion', () => {
+      const schema = ExecutionLease.getVersion('v1');
+      const result = schema.safeParse(v1OnlyLease);
+      expect(result.success).toBe(true);
+    });
+
+    it('Latest points to V2', () => {
+      expect(ExecutionLease.Latest).toBe(ExecutionLease.V2);
+    });
+
+    it('getVersion returns V2 schema', () => {
+      const schema = ExecutionLease.getVersion('v2');
+      const result = schema.safeParse(validLease);
+      expect(result.success).toBe(true);
+    });
+
+    it('parse helpers use V2 and require userId/orgId', () => {
+      const lease = parseExecutionLease(validLease);
+      expect(lease.userId).toBe('firebase-uid-abc123');
+      expect(lease.orgId).toBe('01HQVJ5KWXYZ1234567890ABCE');
+      expect(() => parseExecutionLease(v1OnlyLease)).toThrow();
     });
   });
 });

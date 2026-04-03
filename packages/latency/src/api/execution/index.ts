@@ -25,5 +25,5 @@ export {
 } from './cluster-registration.js';
 
 // Re-export ID types from common for convenience
-export type { LeaseId, ClusterId, QueueItemId, JobId, ProjectId } from '../../common/ids.js';
+export type { LeaseId, ClusterId, QueueItemId, JobId, ProjectId, UserId } from '../../common/ids.js';
 export { generateLeaseId, generateClusterId } from '../../common/ids.js';

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ClusterIdSchema, ProjectIdSchema } from '../../common/ids.js';
+import { ClusterIdSchema, OrganizationIdSchema, ProjectIdSchema, UserIdSchema } from '../../common/ids.js';
 import { ISOTimestampSchema } from '../../common/timestamps.js';
 
 /**
@@ -48,11 +48,8 @@ const SEMVER_REGEX = /^\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?$/;
  * ```
  */
 export namespace ClusterRegistration {
-  /**
-   * V1: Original ClusterRegistration schema.
-   * Cluster registrations with worker capacity tracking.
-   */
-  export const V1 = z.object({
+  // Base shape shared between versions (before refinements)
+  const v1Shape = {
     /** Cluster identity (ULID) */
     id: ClusterIdSchema,
 
@@ -73,7 +70,13 @@ export namespace ClusterRegistration {
 
     /** Orchestrator version (semver format) */
     orchestratorVersion: z.string().regex(SEMVER_REGEX, 'Invalid semver format for orchestratorVersion'),
-  }).refine(
+  };
+
+  /**
+   * V1: Original ClusterRegistration schema.
+   * Cluster registrations with worker capacity tracking.
+   */
+  export const V1 = z.object(v1Shape).refine(
     (data) => data.workers.busy + data.workers.idle <= data.workers.total,
     {
       message: 'busy + idle workers cannot exceed total',
@@ -90,11 +93,37 @@ export namespace ClusterRegistration {
   /** Type inference for V1 schema */
   export type V1 = z.infer<typeof V1>;
 
+  /**
+   * V2: Adds userId and orgId fields for ownership tracking.
+   */
+  export const V2 = z.object({
+    ...v1Shape,
+    /** ID of the user who registered the cluster */
+    userId: UserIdSchema,
+    /** Organization the cluster belongs to */
+    orgId: OrganizationIdSchema,
+  }).refine(
+    (data) => data.workers.busy + data.workers.idle <= data.workers.total,
+    {
+      message: 'busy + idle workers cannot exceed total',
+      path: ['workers'],
+    }
+  ).refine(
+    (data) => new Date(data.lastSeen) >= new Date(data.connectedAt),
+    {
+      message: 'lastSeen must be >= connectedAt',
+      path: ['lastSeen'],
+    }
+  );
+
+  /** Type inference for V2 schema */
+  export type V2 = z.infer<typeof V2>;
+
   /** Latest stable schema - always points to the newest version */
-  export const Latest = V1;
+  export const Latest = V2;
 
   /** Type inference for latest schema */
-  export type Latest = V1;
+  export type Latest = V2;
 
   /**
    * Version registry mapping version keys to their schemas.
@@ -102,11 +131,12 @@ export namespace ClusterRegistration {
    */
   export const VERSIONS = {
     v1: V1,
+    v2: V2,
   } as const;
 
   /**
    * Get the schema for a specific version.
-   * @param version - Version key (e.g., 'v1')
+   * @param version - Version key (e.g., 'v1', 'v2')
    * @returns The schema for that version
    */
   export function getVersion(version: keyof typeof VERSIONS) {

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { LeaseIdSchema, ClusterIdSchema, QueueItemIdSchema, JobIdSchema } from '../../common/ids.js';
+import { LeaseIdSchema, ClusterIdSchema, QueueItemIdSchema, JobIdSchema, UserIdSchema, OrganizationIdSchema } from '../../common/ids.js';
 import { ISOTimestampSchema } from '../../common/timestamps.js';
 
 /**
@@ -31,11 +31,8 @@ export type LeaseStatus = z.infer<typeof LeaseStatusSchema>;
  * ```
  */
 export namespace ExecutionLease {
-  /**
-   * V1: Original ExecutionLease schema.
-   * Execution grants with heartbeat-based TTL renewal.
-   */
-  export const V1 = z.object({
+  /** Shared V1 field definitions, reused by later versions */
+  const v1Shape = {
     /** Unique lease identifier (ULID) */
     id: LeaseIdSchema,
 
@@ -59,7 +56,13 @@ export namespace ExecutionLease {
 
     /** Time-to-live in seconds (positive integer, default 90) */
     ttlSeconds: z.number().int().positive('ttlSeconds must be positive').default(90),
-  }).refine(
+  };
+
+  /**
+   * V1: Original ExecutionLease schema.
+   * Execution grants with heartbeat-based TTL renewal.
+   */
+  export const V1 = z.object(v1Shape).refine(
     (data) => new Date(data.lastHeartbeat) >= new Date(data.grantedAt),
     {
       message: 'lastHeartbeat must be >= grantedAt',
@@ -70,11 +73,34 @@ export namespace ExecutionLease {
   /** Type inference for V1 schema */
   export type V1 = z.infer<typeof V1>;
 
+  /**
+   * V2: Adds userId and orgId for ownership tracking.
+   * Extends V1 fields with user and organization identifiers.
+   */
+  export const V2 = z.object({
+    ...v1Shape,
+
+    /** User who owns/initiated this lease */
+    userId: UserIdSchema,
+
+    /** Organization this lease belongs to */
+    orgId: OrganizationIdSchema,
+  }).refine(
+    (data) => new Date(data.lastHeartbeat) >= new Date(data.grantedAt),
+    {
+      message: 'lastHeartbeat must be >= grantedAt',
+      path: ['lastHeartbeat'],
+    }
+  );
+
+  /** Type inference for V2 schema */
+  export type V2 = z.infer<typeof V2>;
+
   /** Latest stable schema - always points to the newest version */
-  export const Latest = V1;
+  export const Latest = V2;
 
   /** Type inference for latest schema */
-  export type Latest = V1;
+  export type Latest = V2;
 
   /**
    * Version registry mapping version keys to their schemas.
@@ -82,11 +108,12 @@ export namespace ExecutionLease {
    */
   export const VERSIONS = {
     v1: V1,
+    v2: V2,
   } as const;
 
   /**
    * Get the schema for a specific version.
-   * @param version - Version key (e.g., 'v1')
+   * @param version - Version key (e.g., 'v1', 'v2')
    * @returns The schema for that version
    */
   export function getVersion(version: keyof typeof VERSIONS) {
