@@ -29,12 +29,13 @@ export function generateGeneracySubscriptionId(): GeneracySubscriptionId {
 
 /**
  * Organization subscription tiers for Generacy platform.
- * Free: Limited access, single cluster, single execution
- * Starter: Small teams, basic features
- * Team: Growing teams, advanced collaboration
+ * Free: Limited access, single cluster
+ * Basic: Individual developers, basic features
+ * Standard: Small teams, standard collaboration
+ * Professional: Growing teams, advanced features
  * Enterprise: Large organizations, full features, SLA
  */
-export const GeneracyTierSchema = z.enum(['free', 'starter', 'team', 'enterprise']);
+export const GeneracyTierSchema = z.enum(['free', 'basic', 'standard', 'professional', 'enterprise']);
 export type GeneracyTier = z.infer<typeof GeneracyTierSchema>;
 
 /**
