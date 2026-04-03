@@ -1,89 +1,95 @@
-# Feature Specification: Add ExecutionLease and ClusterRegistration types with userId field
+# Feature Specification: ## Summary
 
-Add `userId` and `orgId` fields to existing ExecutionLease and ClusterRegistration Zod schemas to support per-user concurrency enforcement.
+Add shared type definitions for execution leases and cluster registrations to support per-user concurrency enforcement
 
-**Branch**: `059-summary-add-shared-type` | **Date**: 2026-04-03 | **Status**: Draft | **Issue**: [#59](https://github.com/generacy-ai/latency/issues/59)
+**Branch**: `059-summary-add-shared-type` | **Date**: 2026-04-03 | **Status**: Draft
 
 ## Summary
 
-The platform needs per-user concurrency enforcement for execution leases and cluster registrations. The `ExecutionLease` and `ClusterRegistration` types already exist in `packages/latency/src/api/execution/` with V1 schemas, but lack `userId` and `orgId` fields. This feature adds V2 schemas to both types with these fields, following the established versioned namespace pattern (see `GeneracySubscriptionTier` for V1→V2 precedent).
+## Summary
+
+Add shared type definitions for execution leases and cluster registrations to support per-user concurrency enforcement.
+
+## Changes Required
+
+### ExecutionLease Type
+Add to `packages/latency/src/api/subscription/` (or a new `execution/` directory):
+```typescript
+{
+  id: string;              // Lease ID
+  userId: string;          // Which user (seat holder) owns this lease
+  orgId: string;           // Organization
+  clusterId: string;       // Which cluster holds this lease
+  queueItemId: string;     // The queue item being executed
+  jobId: string;           // The orchestrator job ID
+  status: 'active' | 'releasing';
+  grantedAt: string;       // ISO timestamp
+  lastHeartbeat: string;   // ISO timestamp
+  ttlSeconds: number;      // Default: 90
+}
+```
+
+### ClusterRegistration Type
+```typescript
+{
+  id: string;              // Cluster ID
+  userId: string;          // Which user (seat holder) owns this cluster
+  orgId: string;           // Organization
+  projectId: string;       // Which project this cluster serves
+  status: 'connected' | 'disconnected';
+  connectedAt: string;     // ISO timestamp
+  lastSeen: string;        // ISO timestamp
+  workers: {
+    total: number;         // Configured container count
+    busy: number;          // Currently executing
+    idle: number;          // Available for dispatch
+  };
+  orchestratorVersion: string;
+}
+```
+
+## Context
+- `userId` is critical — enforcement is per-user, not per-org
+- See `docs/billing-concurrent-workflow-enforcement.md` in tetrad-development
+- Depends on generacy-ai/latency#58 (tier enum updates)
+
+## Acceptance Criteria
+- [ ] ExecutionLease Zod schema with userId field
+- [ ] ClusterRegistration Zod schema with userId field
+- [ ] Types exported from package entry point
+- [ ] Unit tests for schema validation
 
 ## User Stories
 
-### US1: Concurrency Enforcement Service
+### US1: [Primary User Story]
 
-**As a** concurrency enforcement service,
-**I want** `userId` on every ExecutionLease,
-**So that** I can count active leases per-user and enforce seat-level concurrency limits.
-
-**Acceptance Criteria**:
-- [ ] ExecutionLease V2 schema includes `userId` (required string)
-- [ ] ExecutionLease V2 schema includes `orgId` (required ULID via `OrganizationIdSchema`)
-
-### US2: Cluster Ownership Tracking
-
-**As a** platform routing service,
-**I want** `userId` and `orgId` on ClusterRegistration,
-**So that** I can route work to the correct user's cluster and enforce per-user resource limits.
+**As a** [user type],
+**I want** [capability],
+**So that** [benefit].
 
 **Acceptance Criteria**:
-- [ ] ClusterRegistration V2 schema includes `userId` (required string)
-- [ ] ClusterRegistration V2 schema includes `orgId` (required ULID via `OrganizationIdSchema`)
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]
 
 ## Functional Requirements
 
 | ID | Requirement | Priority | Notes |
 |----|-------------|----------|-------|
-| FR-001 | Add `UserIdSchema` branded type to `common/ids.ts` | P1 | Firebase Auth UIDs are not ULIDs — use `.min(1)` string validation, not ULID regex |
-| FR-002 | Add V2 schema to `ExecutionLease` namespace with `userId` and `orgId` fields | P1 | Follow `GeneracySubscriptionTier` V1→V2 pattern |
-| FR-003 | Add V2 schema to `ClusterRegistration` namespace with `userId` and `orgId` fields | P1 | Follow same pattern as FR-002 |
-| FR-004 | Update `Latest` alias to point to V2 in both namespaces | P1 | Breaking change — consumers get new required fields |
-| FR-005 | Update `VERSIONS` registry to include `v2` in both namespaces | P1 | Allows `getVersion('v2')` |
-| FR-006 | Ensure types are exported from package entry point (`api/execution/index.ts`) | P1 | Already exported — verify no new exports needed beyond existing re-exports |
-| FR-007 | Add unit tests for V2 schema validation | P1 | Test userId/orgId presence, format, and rejection of invalid values |
-
-## Technical Design
-
-### Existing State
-
-- `ExecutionLease.V1`: id, clusterId, queueItemId, jobId, status, grantedAt, lastHeartbeat, ttlSeconds
-- `ClusterRegistration.V1`: id, projectId, status, connectedAt, lastSeen, workers, orchestratorVersion
-- Both use versioned namespace pattern with `Latest`, `VERSIONS`, `getVersion()`
-- `OrganizationIdSchema` exists in `common/ids.ts` (ULID-validated)
-- No `UserIdSchema` exists yet (Firebase Auth UIDs are not ULIDs)
-
-### Changes
-
-1. **`common/ids.ts`**: Add `UserId` branded type and `UserIdSchema` (non-empty string, not ULID)
-2. **`execution-lease.ts`**: Add V2 schema extending V1 shape with `userId` (UserIdSchema) and `orgId` (OrganizationIdSchema). Update `Latest` → V2, add `v2` to `VERSIONS`.
-3. **`cluster-registration.ts`**: Same pattern — add V2 with `userId` and `orgId`.
-4. **Tests**: Add V2-specific test cases for both schemas.
-
-### Dependencies
-
-- Depends on [#58](https://github.com/generacy-ai/latency/issues/58) (tier enum updates)
+| FR-001 | [Description] | P1 | |
 
 ## Success Criteria
 
 | ID | Metric | Target | Measurement |
 |----|--------|--------|-------------|
-| SC-001 | ExecutionLease V2 schema validates userId + orgId | 100% of test cases pass | Unit tests |
-| SC-002 | ClusterRegistration V2 schema validates userId + orgId | 100% of test cases pass | Unit tests |
-| SC-003 | Types exported and consumable from `@generacy/latency` | Import resolves in downstream packages | Build verification |
-| SC-004 | V1 schemas remain accessible via `getVersion('v1')` | V1 tests still pass | Unit tests |
+| SC-001 | [Metric] | [Target] | [How to measure] |
 
 ## Assumptions
 
-- Firebase Auth UIDs are opaque strings (not ULIDs), so `UserIdSchema` uses `.min(1)` validation
-- Updating `Latest` to V2 is acceptable as a breaking change (consumers must provide userId/orgId)
-- `orgId` uses existing `OrganizationIdSchema` (ULID-validated)
+- [Assumption 1]
 
 ## Out of Scope
 
-- Enforcement logic (checking concurrency limits against leases)
-- API endpoints for lease management
-- Migration of existing V1 data to V2 format
-- Firestore security rules or indexes for the new fields
+- [Exclusion 1]
 
 ---
 
