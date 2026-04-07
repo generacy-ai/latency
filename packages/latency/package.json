@@ -48,6 +48,10 @@
       "import": "./dist/protocols/version-compatibility/index.js",
       "types": "./dist/protocols/version-compatibility/index.d.ts"
     },
+    "./api": {
+      "import": "./dist/api/index.js",
+      "types": "./dist/api/index.d.ts"
+    },
     "./types": {
       "import": "./dist/types/index.js",
       "types": "./dist/types/index.d.ts"

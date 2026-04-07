@@ -1,0 +1,12 @@
+{"timestamp":"2026-03-20T23:57:07.032Z","phase":"specify","session_id":"","event_type":"phase_start"}
+{"timestamp":"2026-03-20T23:58:00.191Z","phase":"specify","session_id":"","event_type":"phase_complete"}
+{"timestamp":"2026-03-20T23:58:10.439Z","phase":"clarify","session_id":"","event_type":"phase_start"}
+{"timestamp":"2026-03-21T00:03:08.276Z","phase":"clarify","session_id":"","event_type":"phase_complete"}
+{"timestamp":"2026-03-21T01:41:28.348Z","phase":"clarify","session_id":"","event_type":"phase_start"}
+{"timestamp":"2026-03-21T01:42:37.132Z","phase":"clarify","session_id":"","event_type":"phase_complete"}
+{"timestamp":"2026-03-21T01:42:48.998Z","phase":"plan","session_id":"","event_type":"phase_start"}
+{"timestamp":"2026-03-21T01:47:50.379Z","phase":"plan","session_id":"","event_type":"phase_complete"}
+{"timestamp":"2026-03-21T01:47:59.122Z","phase":"tasks","session_id":"","event_type":"phase_start"}
+{"timestamp":"2026-03-21T01:49:48.616Z","phase":"tasks","session_id":"","event_type":"phase_complete"}
+{"timestamp":"2026-03-21T01:49:57.954Z","phase":"implement","session_id":"","event_type":"phase_start"}
+{"timestamp":"2026-03-21T01:55:34.621Z","phase":"implement","session_id":"","event_type":"phase_complete"}

@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ExecutionLease": {
+      "type": "object",
+      "required": ["id", "clusterId", "queueItemId", "jobId", "status", "grantedAt", "lastHeartbeat", "ttlSeconds"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+          "description": "ULID-format lease identifier"
+        },
+        "clusterId": {
+          "type": "string",
+          "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+          "description": "ULID-format cluster identifier"
+        },
+        "queueItemId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Queue item identifier (external format)"
+        },
+        "jobId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Job identifier (external format)"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "releasing"]
+        },
+        "grantedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when lease was granted"
+        },
+        "lastHeartbeat": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of last heartbeat"
+        },
+        "ttlSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 90,
+          "description": "Time-to-live in seconds"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ClusterRegistration": {
+      "type": "object",
+      "required": ["id", "projectId", "status", "connectedAt", "lastSeen", "workers", "orchestratorVersion"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+          "description": "ULID-format cluster identifier"
+        },
+        "projectId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Project identifier (external format)"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["connected", "disconnected"]
+        },
+        "connectedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when cluster connected"
+        },
+        "lastSeen": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of last activity"
+        },
+        "workers": {
+          "type": "object",
+          "required": ["total", "busy", "idle"],
+          "properties": {
+            "total": { "type": "integer", "minimum": 0 },
+            "busy": { "type": "integer", "minimum": 0 },
+            "idle": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "orchestratorVersion": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Semver version of the orchestrator"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

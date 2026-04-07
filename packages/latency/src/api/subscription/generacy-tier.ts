@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ulid } from 'ulid';
 import { ISOTimestampSchema } from '../../common/timestamps.js';
-import { FeatureEntitlementSchema } from './feature-entitlement.js';
+import { FeatureEntitlementSchema, type PlanFeature, PlanFeatureSchema } from './feature-entitlement.js';
 import { SubscriptionStatusSchema } from './humancy-tier.js';
 
 // ULID regex: 26 characters, Crockford Base32
@@ -29,12 +29,21 @@ export function generateGeneracySubscriptionId(): GeneracySubscriptionId {
 
 /**
  * Organization subscription tiers for Generacy platform.
- * Starter: Small teams, basic features
- * Team: Growing teams, advanced collaboration
+ * Free: Limited access, single cluster
+ * Basic: Individual developers, basic features
+ * Standard: Small teams, standard collaboration
+ * Professional: Growing teams, advanced features
  * Enterprise: Large organizations, full features, SLA
  */
-export const GeneracyTierSchema = z.enum(['starter', 'team', 'enterprise']);
+export const GeneracyTierSchema = z.enum(['free', 'basic', 'standard', 'professional', 'enterprise']);
 export type GeneracyTier = z.infer<typeof GeneracyTierSchema>;
+
+/**
+ * Billing interval for subscription pricing.
+ * Maps to Stripe's recurring.interval on Price objects.
+ */
+export const BillingIntervalSchema = z.enum(['month', 'year']);
+export type BillingInterval = z.infer<typeof BillingIntervalSchema>;
 
 /**
  * Versioned GeneracySubscriptionTier schema namespace.
@@ -46,7 +55,7 @@ export type GeneracyTier = z.infer<typeof GeneracyTierSchema>;
  * ```typescript
  * const subscription = GeneracySubscriptionTier.Latest.parse({
  *   id: '01HQVJ5KWXYZ1234567890ABCD',
- *   tier: 'team',
+ *   tier: 'standard',
  *   orgId: '01HQVJ5KWXYZ1234567890ORGG',
  *   status: 'active',
  *   seatCount: 50,
@@ -63,11 +72,8 @@ export type GeneracyTier = z.infer<typeof GeneracyTierSchema>;
  * ```
  */
 export namespace GeneracySubscriptionTier {
-  /**
-   * V1: Original Generacy subscription tier schema.
-   * Organization subscriptions with seat-based licensing.
-   */
-  export const V1 = z.object({
+  // Base shape shared between versions (before refinements)
+  const baseShape = {
     /** Unique subscription identifier (ULID) */
     id: GeneracySubscriptionIdSchema,
 
@@ -104,9 +110,24 @@ export namespace GeneracySubscriptionTier {
     /** ISO 8601 timestamp when trial ends (if trialing) */
     trialEnd: ISOTimestampSchema.optional(),
 
+    /** Maximum number of connected clusters. null = unlimited, undefined = use tier default */
+    clusterLimit: z.number().int().nonnegative().nullable().optional(),
+
+    /** Maximum concurrent executions. null = unlimited, undefined = use tier default */
+    maxConcurrentExecutions: z.number().int().positive().nullable().optional(),
+
+    /** Maximum concurrent workflows. null = unlimited, undefined = use tier default */
+    maxConcurrentWorkflows: z.number().int().positive().nullable().optional(),
+
     /** ISO 8601 timestamp when subscription was canceled (if canceled) */
     canceledAt: ISOTimestampSchema.optional(),
-  }).refine(
+  };
+
+  /**
+   * V1: Original Generacy subscription tier schema.
+   * Organization subscriptions with seat-based licensing.
+   */
+  export const V1 = z.object(baseShape).refine(
     (data) => data.usedSeats <= data.seatCount,
     {
       message: 'Used seats cannot exceed seat count',
@@ -123,11 +144,67 @@ export namespace GeneracySubscriptionTier {
   /** Type inference for V1 schema */
   export type V1 = z.infer<typeof V1>;
 
+  /**
+   * V2: Adds billing interval and Stripe price ID fields.
+   * Both new fields are optional for backward compatibility.
+   */
+  export const V2 = z.object({
+    ...baseShape,
+    /** Billing cadence. Omitted for free tier. */
+    interval: BillingIntervalSchema.optional(),
+    /** Active Stripe price ID. Omitted for free tier. */
+    priceId: z.string().optional(),
+  }).refine(
+    (data) => data.usedSeats <= data.seatCount,
+    {
+      message: 'Used seats cannot exceed seat count',
+      path: ['usedSeats'],
+    }
+  ).refine(
+    (data) => new Date(data.currentPeriodStart) < new Date(data.currentPeriodEnd),
+    {
+      message: 'currentPeriodStart must be before currentPeriodEnd',
+      path: ['currentPeriodStart'],
+    }
+  );
+
+  /** Type inference for V2 schema */
+  export type V2 = z.infer<typeof V2>;
+
+  /**
+   * V3: Adds maxConcurrentWorkflows as the canonical concurrent limit field.
+   * Both new fields are optional for backward compatibility.
+   */
+  export const V3 = z.object({
+    ...baseShape,
+    /** Billing cadence. Omitted for free tier. */
+    interval: BillingIntervalSchema.optional(),
+    /** Active Stripe price ID. Omitted for free tier. */
+    priceId: z.string().optional(),
+    /** Maximum concurrent workflows. null = unlimited, undefined = use tier default */
+    maxConcurrentWorkflows: z.number().int().positive().nullable().optional(),
+  }).refine(
+    (data) => data.usedSeats <= data.seatCount,
+    {
+      message: 'Used seats cannot exceed seat count',
+      path: ['usedSeats'],
+    }
+  ).refine(
+    (data) => new Date(data.currentPeriodStart) < new Date(data.currentPeriodEnd),
+    {
+      message: 'currentPeriodStart must be before currentPeriodEnd',
+      path: ['currentPeriodStart'],
+    }
+  );
+
+  /** Type inference for V3 schema */
+  export type V3 = z.infer<typeof V3>;
+
   /** Latest stable schema - always point to the newest version */
-  export const Latest = V1;
+  export const Latest = V3;
 
   /** Type inference for latest schema */
-  export type Latest = V1;
+  export type Latest = V3;
 
   /**
    * Version registry mapping version keys to their schemas.
@@ -135,11 +212,13 @@ export namespace GeneracySubscriptionTier {
    */
   export const VERSIONS = {
     v1: V1,
+    v2: V2,
+    v3: V3,
   } as const;
 
   /**
    * Get the schema for a specific version.
-   * @param version - Version key (e.g., 'v1')
+   * @param version - Version key (e.g., 'v1', 'v2')
    * @returns The schema for that version
    */
   export function getVersion(version: keyof typeof VERSIONS) {
@@ -159,3 +238,27 @@ export const parseGeneracySubscriptionTier = (data: unknown): GeneracySubscripti
 
 export const safeParseGeneracySubscriptionTier = (data: unknown) =>
   GeneracySubscriptionTierSchema.safeParse(data);
+
+/**
+ * Default limits for each Generacy subscription tier.
+ * null = unlimited. Used as fallback when clusterLimit / maxConcurrentWorkflows are absent.
+ */
+export const GENERACY_TIER_DEFAULTS = {
+  free:         { clusterLimit: 1,    maxConcurrentWorkflows: 1,    cloudUiEnabled: false },
+  basic:        { clusterLimit: 2,    maxConcurrentWorkflows: 2,    cloudUiEnabled: true  },
+  standard:     { clusterLimit: 3,    maxConcurrentWorkflows: 5,    cloudUiEnabled: true  },
+  professional: { clusterLimit: 4,    maxConcurrentWorkflows: 10,   cloudUiEnabled: true  },
+  enterprise:   { clusterLimit: null, maxConcurrentWorkflows: null, cloudUiEnabled: true  },
+} as const satisfies Record<GeneracyTier, { clusterLimit: number | null; maxConcurrentWorkflows: number | null; cloudUiEnabled: boolean }>;
+
+/**
+ * Default feature entitlements for each Generacy subscription tier.
+ * All paid tiers get all known features automatically via PlanFeatureSchema.options.
+ */
+export const GENERACY_TIER_FEATURES = {
+  free:         ['github_integration'] as const,
+  basic:        PlanFeatureSchema.options,
+  standard:     PlanFeatureSchema.options,
+  professional: PlanFeatureSchema.options,
+  enterprise:   PlanFeatureSchema.options,
+} as const satisfies Record<GeneracyTier, readonly PlanFeature[]>;
