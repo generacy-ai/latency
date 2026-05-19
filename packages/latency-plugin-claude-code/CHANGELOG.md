@@ -1,5 +1,12 @@
 # @generacy-ai/latency-plugin-claude-code
 
+## 0.1.2
+
+### Patch Changes
+
+- @generacy-ai/claude-code-interface@0.1.2
+- @generacy-ai/latency-plugin-dev-agent@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes
