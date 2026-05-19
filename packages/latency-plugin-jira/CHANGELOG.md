@@ -1,5 +1,14 @@
 # @generacy-ai/latency-plugin-jira
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [c4a4077]
+  - @generacy-ai/latency@0.1.2
+  - @generacy-ai/jira-interface@0.1.2
+  - @generacy-ai/latency-plugin-issue-tracker@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes
